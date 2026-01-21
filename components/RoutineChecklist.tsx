@@ -3,6 +3,7 @@ import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { RoutineManager } from '../services/RoutineManager';
 import { RoutineItem, ROUTINE_ITEM_INFO } from '../types/RoutineItem';
 import PushupTrackingScreen from './PushupTrackingScreen';
+import PhotoCaptureScreen from './PhotoCaptureScreen';
 
 interface RoutineChecklistProps {
   routineManager: RoutineManager;
@@ -13,6 +14,7 @@ export default function RoutineChecklist({ routineManager }: RoutineChecklistPro
   const [refreshKey, setRefreshKey] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
   const [showPushupTracker, setShowPushupTracker] = useState(false);
+  const [photoItem, setPhotoItem] = useState<RoutineItem | null>(null);
   const items = routineManager.getAllItems();
 
   useEffect(() => {
@@ -31,6 +33,12 @@ export default function RoutineChecklist({ routineManager }: RoutineChecklistPro
       return;
     }
 
+    // If it's coffee/breakfast or water, show photo capture
+    if (item === RoutineItem.COFFEE_BREAKFAST || item === RoutineItem.WATER) {
+      setPhotoItem(item);
+      return;
+    }
+
     // For other items, just toggle
     await routineManager.toggleItem(item);
     setRefreshKey((prev) => prev + 1); // Force re-render
@@ -39,6 +47,13 @@ export default function RoutineChecklist({ routineManager }: RoutineChecklistPro
   const handlePushupComplete = async () => {
     await routineManager.markComplete(RoutineItem.PUSHUPS);
     setRefreshKey((prev) => prev + 1);
+  };
+
+  const handlePhotoTaken = async () => {
+    if (photoItem) {
+      await routineManager.markComplete(photoItem);
+      setRefreshKey((prev) => prev + 1);
+    }
   };
 
   if (isLoading) {
@@ -92,6 +107,15 @@ export default function RoutineChecklist({ routineManager }: RoutineChecklistPro
         onClose={() => setShowPushupTracker(false)}
         onComplete={handlePushupComplete}
       />
+
+      {photoItem && (
+        <PhotoCaptureScreen
+          visible={photoItem !== null}
+          routineItem={photoItem}
+          onClose={() => setPhotoItem(null)}
+          onPhotoTaken={handlePhotoTaken}
+        />
+      )}
     </View>
   );
 }
