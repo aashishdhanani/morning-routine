@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
 import { RoutineManager } from '../services/RoutineManager';
 import { RoutineItem, ROUTINE_ITEM_INFO } from '../types/RoutineItem';
+import PushupTrackingScreen from './PushupTrackingScreen';
 
 interface RoutineChecklistProps {
   routineManager: RoutineManager;
@@ -11,6 +12,7 @@ export default function RoutineChecklist({ routineManager }: RoutineChecklistPro
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [refreshKey, setRefreshKey] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
+  const [showPushupTracker, setShowPushupTracker] = useState(false);
   const items = routineManager.getAllItems();
 
   useEffect(() => {
@@ -22,9 +24,21 @@ export default function RoutineChecklist({ routineManager }: RoutineChecklistPro
     loadRoutineState();
   }, [routineManager]);
 
-  const handleToggle = async (item: RoutineItem) => {
+  const handleItemPress = async (item: RoutineItem) => {
+    // If it's pushups, show the tracking screen
+    if (item === RoutineItem.PUSHUPS) {
+      setShowPushupTracker(true);
+      return;
+    }
+
+    // For other items, just toggle
     await routineManager.toggleItem(item);
     setRefreshKey((prev) => prev + 1); // Force re-render
+  };
+
+  const handlePushupComplete = async () => {
+    await routineManager.markComplete(RoutineItem.PUSHUPS);
+    setRefreshKey((prev) => prev + 1);
   };
 
   if (isLoading) {
@@ -45,7 +59,7 @@ export default function RoutineChecklist({ routineManager }: RoutineChecklistPro
           <TouchableOpacity
             key={item}
             style={[styles.item, isCompleted && styles.itemCompleted]}
-            onPress={() => handleToggle(item)}
+            onPress={() => handleItemPress(item)}
             activeOpacity={0.7}
           >
             <View style={styles.itemContent}>
@@ -72,6 +86,12 @@ export default function RoutineChecklist({ routineManager }: RoutineChecklistPro
           <Text style={styles.completeText}>🎉 Routine Complete!</Text>
         )}
       </View>
+
+      <PushupTrackingScreen
+        visible={showPushupTracker}
+        onClose={() => setShowPushupTracker(false)}
+        onComplete={handlePushupComplete}
+      />
     </View>
   );
 }
