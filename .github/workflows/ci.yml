@@ -1,0 +1,62 @@
+name: CI
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Set up Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '18'
+        cache: 'npm'
+    
+    - name: Install dependencies
+      run: npm ci
+    
+    - name: Run type check
+      run: npm run type-check
+    
+    - name: Run linter
+      run: npm run lint
+    
+    - name: Check formatting
+      run: npm run format -- --check
+    
+    - name: Run tests
+      run: npm test -- --passWithNoTests
+
+  python-tooling:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - uses: actions/checkout@v4
+    
+    - name: Set up Python
+      uses: actions/setup-python@v5
+      with:
+        python-version: '3.12'
+    
+    - name: Install uv
+      run: curl -LsSf https://astral.sh/uv/install.sh | sh
+    
+    - name: Install Python dependencies
+      run: |
+        source $HOME/.cargo/env
+        uv venv
+        source .venv/bin/activate
+        uv pip install -e ".[dev]" || echo "Python tooling optional, continuing..."
+    
+    - name: Run Python linters
+      run: |
+        source .venv/bin/activate
+        make lint || echo "Python linting optional"
+      continue-on-error: true

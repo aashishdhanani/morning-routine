@@ -1,0 +1,62 @@
+{
+  "expo": {
+    "name": "Morning Routine",
+    "slug": "morning-routine",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "userInterfaceStyle": "light",
+    "splash": {
+      "image": "./assets/splash.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#ffffff"
+    },
+    "assetBundlePatterns": ["**/*"],
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.morningroutine.app",
+      "infoPlist": {
+        "NSCameraUsageDescription": "We need access to your camera to verify your morning routine items (coffee, breakfast, water).",
+        "NSPhotoLibraryUsageDescription": "We need access to your photo library to save verification photos.",
+        "NSMotionUsageDescription": "We need access to motion sensors to track your pushups.",
+        "NSHealthShareUsageDescription": "We need access to HealthKit to track your exercise.",
+        "NSHealthUpdateUsageDescription": "We need access to HealthKit to record your pushups."
+      }
+    },
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#ffffff"
+      },
+      "permissions": [
+        "CAMERA",
+        "READ_EXTERNAL_STORAGE",
+        "WRITE_EXTERNAL_STORAGE",
+        "ACTIVITY_RECOGNITION"
+      ]
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    },
+    "plugins": [
+      [
+        "expo-camera",
+        {
+          "cameraPermission": "Allow Morning Routine to access your camera to verify routine items."
+        }
+      ],
+      [
+        "expo-image-picker",
+        {
+          "photosPermission": "Allow Morning Routine to access your photos to save verification images."
+        }
+      ],
+      [
+        "expo-sensors",
+        {
+          "motionPermission": "Allow Morning Routine to access motion sensors to track your pushups."
+        }
+      ]
+    ]
+  }
+}
