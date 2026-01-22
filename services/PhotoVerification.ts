@@ -14,13 +14,30 @@ export class PhotoVerification {
   private photosDirectory: string;
 
   constructor() {
-    this.photosDirectory = `${FileSystem.documentDirectory}routine-photos/`;
+    try {
+      this.photosDirectory = FileSystem.documentDirectory
+        ? `${FileSystem.documentDirectory}routine-photos/`
+        : '';
+    } catch (error) {
+      console.warn('FileSystem not available:', error);
+      this.photosDirectory = '';
+    }
+  }
+
+  /**
+   * Check if FileSystem is available
+   */
+  isAvailable(): boolean {
+    return this.photosDirectory !== '' && FileSystem.documentDirectory !== undefined;
   }
 
   /**
    * Initialize the photos directory
    */
   async initialize(): Promise<void> {
+    if (!this.isAvailable()) {
+      throw new Error('FileSystem not available - photo features are disabled');
+    }
     const dirInfo = await FileSystem.getInfoAsync(this.photosDirectory);
     if (!dirInfo.exists) {
       await FileSystem.makeDirectoryAsync(this.photosDirectory, { intermediates: true });
