@@ -11,7 +11,9 @@
       "resizeMode": "contain",
       "backgroundColor": "#ffffff"
     },
-    "assetBundlePatterns": ["**/*"],
+    "assetBundlePatterns": [
+      "**/*"
+    ],
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.morningroutine.app",
@@ -56,7 +58,8 @@
         {
           "motionPermission": "Allow Morning Routine to access motion sensors to track your pushups."
         }
-      ]
+      ],
+      "expo-asset"
     ]
   }
 }
