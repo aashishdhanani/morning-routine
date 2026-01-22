@@ -36,30 +36,30 @@ describe('RoutineManager', () => {
       expect(routineManager.isCompleted(RoutineItem.PUSHUPS)).toBe(false);
     });
 
-    test('markComplete marks an item as complete', () => {
-      routineManager.markComplete(RoutineItem.PUSHUPS);
+    test('markComplete marks an item as complete', async () => {
+      await routineManager.markComplete(RoutineItem.PUSHUPS);
       expect(routineManager.isCompleted(RoutineItem.PUSHUPS)).toBe(true);
     });
 
-    test('markIncomplete marks an item as incomplete', () => {
-      routineManager.markComplete(RoutineItem.PUSHUPS);
-      routineManager.markIncomplete(RoutineItem.PUSHUPS);
+    test('markIncomplete marks an item as incomplete', async () => {
+      await routineManager.markComplete(RoutineItem.PUSHUPS);
+      await routineManager.markIncomplete(RoutineItem.PUSHUPS);
       expect(routineManager.isCompleted(RoutineItem.PUSHUPS)).toBe(false);
     });
 
-    test('toggleItem toggles completion status', () => {
+    test('toggleItem toggles completion status', async () => {
       expect(routineManager.isCompleted(RoutineItem.PUSHUPS)).toBe(false);
-      routineManager.toggleItem(RoutineItem.PUSHUPS);
+      await routineManager.toggleItem(RoutineItem.PUSHUPS);
       expect(routineManager.isCompleted(RoutineItem.PUSHUPS)).toBe(true);
-      routineManager.toggleItem(RoutineItem.PUSHUPS);
+      await routineManager.toggleItem(RoutineItem.PUSHUPS);
       expect(routineManager.isCompleted(RoutineItem.PUSHUPS)).toBe(false);
     });
 
-    test('getCompletedCount returns correct count', () => {
+    test('getCompletedCount returns correct count', async () => {
       expect(routineManager.getCompletedCount()).toBe(0);
-      routineManager.markComplete(RoutineItem.PUSHUPS);
+      await routineManager.markComplete(RoutineItem.PUSHUPS);
       expect(routineManager.getCompletedCount()).toBe(1);
-      routineManager.markComplete(RoutineItem.WATER);
+      await routineManager.markComplete(RoutineItem.WATER);
       expect(routineManager.getCompletedCount()).toBe(2);
     });
 
@@ -67,25 +67,25 @@ describe('RoutineManager', () => {
       expect(routineManager.getTotalCount()).toBe(5);
     });
 
-    test('isRoutineComplete returns true when all items complete', () => {
+    test('isRoutineComplete returns true when all items complete', async () => {
       expect(routineManager.isRoutineComplete()).toBe(false);
 
-      routineManager.markComplete(RoutineItem.PUSHUPS);
-      routineManager.markComplete(RoutineItem.COFFEE_BREAKFAST);
-      routineManager.markComplete(RoutineItem.WATER);
-      routineManager.markComplete(RoutineItem.CALENDAR_EMAILS);
+      await routineManager.markComplete(RoutineItem.PUSHUPS);
+      await routineManager.markComplete(RoutineItem.COFFEE_BREAKFAST);
+      await routineManager.markComplete(RoutineItem.WATER);
+      await routineManager.markComplete(RoutineItem.CALENDAR_EMAILS);
       expect(routineManager.isRoutineComplete()).toBe(false);
 
-      routineManager.markComplete(RoutineItem.MUSIC);
+      await routineManager.markComplete(RoutineItem.MUSIC);
       expect(routineManager.isRoutineComplete()).toBe(true);
     });
 
-    test('resetRoutine clears all completed items', () => {
-      routineManager.markComplete(RoutineItem.PUSHUPS);
-      routineManager.markComplete(RoutineItem.WATER);
+    test('resetRoutine clears all completed items', async () => {
+      await routineManager.markComplete(RoutineItem.PUSHUPS);
+      await routineManager.markComplete(RoutineItem.WATER);
       expect(routineManager.getCompletedCount()).toBe(2);
 
-      routineManager.resetRoutine();
+      await routineManager.resetRoutine();
       expect(routineManager.getCompletedCount()).toBe(0);
     });
   });
@@ -121,8 +121,8 @@ describe('RoutineManager', () => {
     });
 
     test('saveState persists completion state to AsyncStorage', async () => {
-      routineManager.markComplete(RoutineItem.PUSHUPS);
-      routineManager.markComplete(RoutineItem.WATER);
+      await routineManager.markComplete(RoutineItem.PUSHUPS);
+      await routineManager.markComplete(RoutineItem.WATER);
 
       await routineManager.saveState();
 
@@ -146,7 +146,7 @@ describe('RoutineManager', () => {
     });
 
     test('markIncomplete auto-saves state', async () => {
-      routineManager.markComplete(RoutineItem.PUSHUPS);
+      await routineManager.markComplete(RoutineItem.PUSHUPS);
       jest.clearAllMocks();
 
       await routineManager.markIncomplete(RoutineItem.PUSHUPS);
@@ -161,12 +161,12 @@ describe('RoutineManager', () => {
     });
 
     test('resetRoutine auto-saves state', async () => {
-      routineManager.markComplete(RoutineItem.PUSHUPS);
+      await routineManager.markComplete(RoutineItem.PUSHUPS);
       jest.clearAllMocks();
 
       await routineManager.resetRoutine();
 
-      expect(AsyncStorage.setItem).toHaveBeenCalled();
+      expect(AsyncStorage.removeItem).toHaveBeenCalledWith('routineStartTime');
     });
   });
 });
