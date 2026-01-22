@@ -1,16 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
-import { LinearGradient } from 'expo-linear-gradient';
 import { HistoryManager } from '../services/HistoryManager';
 import { DateUtils } from '../services/DateUtils';
 import {
   Colors,
-  Gradients,
   Spacing,
   BorderRadius,
   FontSizes,
   FontWeights,
   Shadows,
+  FontFamilies,
 } from '../constants/theme';
 
 interface HistoryCardProps {
@@ -75,24 +74,15 @@ export default function HistoryCard({ historyManager }: HistoryCardProps) {
       onPress={() => setExpanded(!expanded)}
       style={styles.container}
     >
-      <LinearGradient
-        colors={Gradients.primary}
-        start={{ x: 0, y: 0 }}
-        end={{ x: 1, y: 1 }}
-        style={styles.gradient}
-      >
+      <View style={styles.card}>
         {/* Collapsed View: Streak Badge */}
         <View style={styles.header}>
-          <View style={styles.streakBadge}>
-            <Text style={styles.streakEmoji}>🔥</Text>
-            <Text style={styles.streakNumber}>{statistics.currentStreak}</Text>
-          </View>
-          <View style={styles.headerText}>
-            <Text style={styles.streakLabel}>Day Streak</Text>
-            <Text style={styles.expandHint}>
-              {expanded ? '▼ Tap to collapse' : '▶ Tap for details'}
-            </Text>
-          </View>
+          <Text style={styles.streakInfo}>
+            [🔥 STREAK: {statistics.currentStreak} DAYS]
+          </Text>
+          <Text style={styles.expandHint}>
+            {expanded ? '[-]' : '[+]'}
+          </Text>
         </View>
 
         {/* Expanded View: Calendar & Stats */}
@@ -100,42 +90,35 @@ export default function HistoryCard({ historyManager }: HistoryCardProps) {
           <View style={styles.expandedContent}>
             {/* Calendar */}
             <View style={styles.section}>
-              <Text style={styles.sectionTitle}>Last 30 Days</Text>
+              <Text style={styles.sectionTitle}>$ LAST_30_DAYS:</Text>
               {renderCalendarGrid()}
               <View style={styles.calendarLegend}>
-                <View style={styles.legendItem}>
-                  <View style={[styles.legendDot, styles.legendDotCompleted]} />
-                  <Text style={styles.legendText}>Completed</Text>
-                </View>
-                <View style={styles.legendItem}>
-                  <View style={[styles.legendDot, styles.legendDotToday]} />
-                  <Text style={styles.legendText}>Today</Text>
-                </View>
+                <Text style={styles.legendText}>[■] COMPLETE  [ ] INCOMPLETE</Text>
               </View>
             </View>
 
             {/* Statistics Grid */}
             <View style={styles.statsGrid}>
               <View style={styles.statBox}>
+                <Text style={styles.statLabel}>LONGEST_STREAK:</Text>
                 <Text style={styles.statValue}>{statistics.longestStreak}</Text>
-                <Text style={styles.statLabel}>Longest Streak</Text>
               </View>
               <View style={styles.statBox}>
+                <Text style={styles.statLabel}>TOTAL_RUNS:</Text>
                 <Text style={styles.statValue}>{statistics.totalCompletions}</Text>
-                <Text style={styles.statLabel}>Total Completions</Text>
               </View>
               <View style={styles.statBox}>
+                <Text style={styles.statLabel}>SUCCESS_RATE:</Text>
                 <Text style={styles.statValue}>{statistics.completionRate}%</Text>
-                <Text style={styles.statLabel}>30-Day Rate</Text>
               </View>
               <View style={styles.statBox}>
+                <Text style={styles.statLabel}>AVG_TIME:</Text>
                 <Text style={styles.statValue}>{statistics.averageTime}</Text>
-                <Text style={styles.statLabel}>Avg Time</Text>
               </View>
             </View>
           </View>
         )}
-      </LinearGradient>
+      </View>
     </TouchableOpacity>
   );
 }
@@ -143,147 +126,108 @@ export default function HistoryCard({ historyManager }: HistoryCardProps) {
 const styles = StyleSheet.create({
   container: {
     marginBottom: Spacing.md,
-    borderRadius: BorderRadius.lg,
-    overflow: 'hidden',
-    ...Shadows.md,
   },
-  gradient: {
-    padding: Spacing.lg,
-    borderRadius: BorderRadius.lg,
+  card: {
+    borderWidth: 1,
+    borderColor: Colors.terminal.green,
+    borderRadius: BorderRadius.sm,
+    backgroundColor: Colors.terminal.darkGray,
+    padding: Spacing.md,
+    ...Shadows.md,
   },
   header: {
     flexDirection: 'row',
     alignItems: 'center',
+    justifyContent: 'space-between',
   },
-  streakBadge: {
-    width: 70,
-    height: 70,
-    borderRadius: BorderRadius.full,
-    backgroundColor: 'rgba(255, 255, 255, 0.25)',
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginRight: Spacing.md,
-  },
-  streakEmoji: {
-    fontSize: 28,
-    marginBottom: -4,
-  },
-  streakNumber: {
-    fontSize: FontSizes.xl,
-    fontWeight: FontWeights.extrabold,
-    color: Colors.neutral.white,
-  },
-  headerText: {
+  streakInfo: {
+    fontSize: FontSizes.base,
+    fontWeight: FontWeights.bold,
+    color: Colors.terminal.amber,
+    fontFamily: FontFamilies.mono,
     flex: 1,
   },
-  streakLabel: {
-    fontSize: FontSizes.lg,
-    fontWeight: FontWeights.bold,
-    color: Colors.neutral.white,
-    marginBottom: Spacing.xs,
-  },
   expandHint: {
-    fontSize: FontSizes.sm,
-    color: Colors.neutral.white,
-    opacity: 0.7,
+    fontSize: FontSizes.base,
+    color: Colors.terminal.green,
+    fontFamily: FontFamilies.mono,
   },
   expandedContent: {
-    marginTop: Spacing.lg,
-    paddingTop: Spacing.lg,
+    marginTop: Spacing.md,
+    paddingTop: Spacing.md,
     borderTopWidth: 1,
-    borderTopColor: 'rgba(255, 255, 255, 0.2)',
+    borderTopColor: Colors.terminal.gray,
   },
   section: {
-    marginBottom: Spacing.lg,
+    marginBottom: Spacing.md,
   },
   sectionTitle: {
-    fontSize: FontSizes.base,
-    fontWeight: FontWeights.semibold,
-    color: Colors.neutral.white,
-    marginBottom: Spacing.md,
-    textTransform: 'uppercase',
-    letterSpacing: 1,
+    fontSize: FontSizes.sm,
+    fontWeight: FontWeights.normal,
+    color: Colors.terminal.cyan,
+    fontFamily: FontFamilies.mono,
+    marginBottom: Spacing.sm,
   },
   calendarGrid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    gap: 6,
-    marginBottom: Spacing.md,
+    gap: 4,
+    marginBottom: Spacing.sm,
   },
   calendarDay: {
-    width: 36,
-    height: 36,
-    borderRadius: BorderRadius.sm,
-    backgroundColor: 'rgba(255, 255, 255, 0.15)',
+    width: 32,
+    height: 32,
+    borderWidth: 1,
+    borderColor: Colors.terminal.gray,
+    backgroundColor: Colors.terminal.black,
     justifyContent: 'center',
     alignItems: 'center',
   },
   calendarDayCompleted: {
-    backgroundColor: 'rgba(16, 185, 129, 0.4)',
+    backgroundColor: Colors.terminal.green,
+    borderColor: Colors.terminal.brightGreen,
   },
   calendarDayToday: {
     borderWidth: 2,
-    borderColor: Colors.neutral.white,
+    borderColor: Colors.terminal.amber,
   },
   calendarDayDot: {
-    width: 8,
-    height: 8,
-    borderRadius: BorderRadius.full,
-    backgroundColor: Colors.accent.green,
+    width: 6,
+    height: 6,
+    backgroundColor: Colors.terminal.black,
   },
   calendarLegend: {
-    flexDirection: 'row',
-    gap: Spacing.md,
-  },
-  legendItem: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    gap: Spacing.xs,
-  },
-  legendDot: {
-    width: 12,
-    height: 12,
-    borderRadius: BorderRadius.full,
-  },
-  legendDotCompleted: {
-    backgroundColor: Colors.accent.green,
-  },
-  legendDotToday: {
-    backgroundColor: 'transparent',
-    borderWidth: 2,
-    borderColor: Colors.neutral.white,
+    marginTop: Spacing.xs,
   },
   legendText: {
-    fontSize: FontSizes.sm,
-    color: Colors.neutral.white,
-    opacity: 0.8,
+    fontSize: FontSizes.xs,
+    color: Colors.terminal.cyan,
+    fontFamily: FontFamilies.mono,
   },
   statsGrid: {
     flexDirection: 'row',
     flexWrap: 'wrap',
-    gap: Spacing.md,
+    gap: Spacing.sm,
   },
   statBox: {
     flex: 1,
     minWidth: '45%',
-    backgroundColor: 'rgba(255, 255, 255, 0.15)',
-    borderRadius: BorderRadius.md,
-    padding: Spacing.md,
-    alignItems: 'center',
-  },
-  statValue: {
-    fontSize: FontSizes.xxl,
-    fontWeight: FontWeights.extrabold,
-    color: Colors.neutral.white,
-    marginBottom: Spacing.xs,
+    borderWidth: 1,
+    borderColor: Colors.terminal.gray,
+    backgroundColor: Colors.terminal.black,
+    padding: Spacing.sm,
   },
   statLabel: {
     fontSize: FontSizes.xs,
-    fontWeight: FontWeights.medium,
-    color: Colors.neutral.white,
-    opacity: 0.8,
-    textAlign: 'center',
-    textTransform: 'uppercase',
-    letterSpacing: 0.5,
+    fontWeight: FontWeights.normal,
+    color: Colors.terminal.cyan,
+    fontFamily: FontFamilies.mono,
+    marginBottom: Spacing.xs,
+  },
+  statValue: {
+    fontSize: FontSizes.xl,
+    fontWeight: FontWeights.bold,
+    color: Colors.terminal.green,
+    fontFamily: FontFamilies.mono,
   },
 });

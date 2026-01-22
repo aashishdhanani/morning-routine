@@ -6,6 +6,14 @@ import {
   PushupPhase,
   type PushupData,
 } from '../services/PushupTracker';
+import {
+  Colors,
+  Spacing,
+  BorderRadius,
+  FontSizes,
+  FontWeights,
+  FontFamilies,
+} from '../constants/theme';
 
 interface PushupTrackingScreenProps {
   visible: boolean;
@@ -99,54 +107,54 @@ export default function PushupTrackingScreen({
   const getPhaseText = (): string => {
     switch (data.phase) {
       case PushupPhase.NEUTRAL:
-        return 'Ready';
+        return 'READY';
       case PushupPhase.DESCENDING:
-        return 'Going down...';
+        return 'DESCENDING...';
       case PushupPhase.BOTTOM:
-        return 'At bottom';
+        return 'AT_BOTTOM';
       case PushupPhase.ASCENDING:
-        return 'Coming up...';
+        return 'ASCENDING...';
       default:
-        return 'Ready';
+        return 'READY';
     }
   };
 
   const getInstructions = (): string => {
     if (data.state === PushupState.IDLE) {
-      return 'Place your phone on your back and start tracking when ready.';
+      return '> Place phone on your back and start tracking';
     }
     if (data.state === PushupState.COMPLETED) {
-      return 'Great job! You completed 20 pushups!';
+      return '> TARGET_COMPLETE: 20 pushups';
     }
-    return 'Keep going! The phone will track your movement.';
+    return '> TRACKING: Phone monitoring movement';
   };
 
   return (
     <Modal visible={visible} animationType="slide" onRequestClose={handleClose}>
       <View style={styles.container}>
         <View style={styles.header}>
-          <Text style={styles.title}>Pushup Tracking</Text>
+          <Text style={styles.title}>$ PUSHUP_TRACKER</Text>
           <TouchableOpacity onPress={handleClose} style={styles.closeButton}>
-            <Text style={styles.closeButtonText}>✕</Text>
+            <Text style={styles.closeButtonText}>[X]</Text>
           </TouchableOpacity>
         </View>
 
         <View style={styles.content}>
           <View style={styles.countContainer}>
-            <Text style={styles.countLabel}>Pushups</Text>
+            <Text style={styles.countLabel}>$ REPS_COMPLETE:</Text>
             <Text style={styles.count}>
               {data.count} / {data.targetCount}
             </Text>
           </View>
 
-          <View style={styles.progressBar}>
+          <View style={styles.progressBarContainer}>
             <View
-              style={[styles.progressFill, { width: `${(data.count / data.targetCount) * 100}%` }]}
+              style={[styles.progressBar, { width: `${(data.count / data.targetCount) * 100}%` }]}
             />
           </View>
 
           <View style={styles.statusContainer}>
-            <Text style={styles.statusLabel}>Status</Text>
+            <Text style={styles.statusLabel}>$ STATUS:</Text>
             <Text style={styles.status}>{getPhaseText()}</Text>
           </View>
 
@@ -155,7 +163,7 @@ export default function PushupTrackingScreen({
           {!sensorsAvailable && (
             <View style={styles.warningContainer}>
               <Text style={styles.warningText}>
-                ⚠️ This feature requires a physical device with motion sensors
+                [!] REQUIRES: Physical device with motion sensors
               </Text>
             </View>
           )}
@@ -168,24 +176,24 @@ export default function PushupTrackingScreen({
               onPress={handleStart}
               disabled={!sensorsAvailable}
             >
-              <Text style={styles.buttonText}>Start Tracking</Text>
+              <Text style={styles.buttonText}>START_TRACKING</Text>
             </TouchableOpacity>
           )}
 
           {data.state === PushupState.TRACKING && (
             <>
               <TouchableOpacity style={[styles.button, styles.stopButton]} onPress={handleStop}>
-                <Text style={styles.buttonText}>Stop</Text>
+                <Text style={styles.buttonText}>STOP</Text>
               </TouchableOpacity>
               <TouchableOpacity style={[styles.button, styles.resetButton]} onPress={handleReset}>
-                <Text style={styles.buttonText}>Reset</Text>
+                <Text style={styles.buttonText}>RESET</Text>
               </TouchableOpacity>
             </>
           )}
 
           {data.state === PushupState.COMPLETED && (
             <TouchableOpacity style={[styles.button, styles.completeButton]} onPress={handleClose}>
-              <Text style={styles.buttonText}>Done</Text>
+              <Text style={styles.buttonText}>DONE</Text>
             </TouchableOpacity>
           )}
         </View>
@@ -197,119 +205,153 @@ export default function PushupTrackingScreen({
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: Colors.background.primary,
   },
   header: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    padding: 20,
+    paddingHorizontal: Spacing.lg,
     paddingTop: 60,
+    paddingBottom: Spacing.lg,
+    backgroundColor: Colors.terminal.darkGray,
     borderBottomWidth: 1,
-    borderBottomColor: '#e0e0e0',
+    borderBottomColor: Colors.terminal.green,
   },
   title: {
-    fontSize: 24,
-    fontWeight: 'bold',
+    fontSize: FontSizes.xl,
+    fontWeight: FontWeights.bold,
+    color: Colors.terminal.green,
+    fontFamily: FontFamilies.mono,
   },
   closeButton: {
-    padding: 8,
+    paddingHorizontal: Spacing.sm,
+    paddingVertical: Spacing.xs,
+    borderWidth: 1,
+    borderColor: Colors.terminal.red,
+    borderRadius: BorderRadius.sm,
   },
   closeButtonText: {
-    fontSize: 24,
-    color: '#666',
+    fontSize: FontSizes.sm,
+    color: Colors.terminal.red,
+    fontFamily: FontFamilies.mono,
+    fontWeight: FontWeights.bold,
   },
   content: {
     flex: 1,
-    padding: 20,
+    padding: Spacing.lg,
     justifyContent: 'center',
     alignItems: 'center',
   },
   countContainer: {
     alignItems: 'center',
-    marginBottom: 30,
+    marginBottom: Spacing.xl,
+    borderWidth: 2,
+    borderColor: Colors.terminal.green,
+    backgroundColor: Colors.terminal.darkGray,
+    padding: Spacing.lg,
+    borderRadius: BorderRadius.sm,
+    width: '100%',
   },
   countLabel: {
-    fontSize: 18,
-    color: '#666',
-    marginBottom: 10,
+    fontSize: FontSizes.base,
+    color: Colors.terminal.cyan,
+    marginBottom: Spacing.md,
+    fontFamily: FontFamilies.mono,
   },
   count: {
-    fontSize: 72,
-    fontWeight: 'bold',
-    color: '#4caf50',
+    fontSize: 64,
+    fontWeight: FontWeights.bold,
+    color: Colors.terminal.green,
+    fontFamily: FontFamilies.mono,
+    fontVariant: ['tabular-nums'],
   },
-  progressBar: {
+  progressBarContainer: {
     width: '100%',
-    height: 12,
-    backgroundColor: '#e0e0e0',
-    borderRadius: 6,
-    marginBottom: 40,
+    height: 8,
+    backgroundColor: Colors.terminal.gray,
+    borderRadius: 0,
+    marginBottom: Spacing.xl,
     overflow: 'hidden',
   },
-  progressFill: {
+  progressBar: {
     height: '100%',
-    backgroundColor: '#4caf50',
-    borderRadius: 6,
+    backgroundColor: Colors.terminal.green,
   },
   statusContainer: {
     alignItems: 'center',
-    marginBottom: 20,
+    marginBottom: Spacing.lg,
+    borderWidth: 1,
+    borderColor: Colors.terminal.gray,
+    backgroundColor: Colors.terminal.darkGray,
+    padding: Spacing.md,
+    borderRadius: BorderRadius.sm,
+    width: '100%',
   },
   statusLabel: {
-    fontSize: 16,
-    color: '#666',
-    marginBottom: 8,
+    fontSize: FontSizes.sm,
+    color: Colors.terminal.amber,
+    marginBottom: Spacing.sm,
+    fontFamily: FontFamilies.mono,
   },
   status: {
-    fontSize: 20,
-    fontWeight: '600',
-    color: '#333',
+    fontSize: FontSizes.lg,
+    fontWeight: FontWeights.bold,
+    color: Colors.terminal.green,
+    fontFamily: FontFamilies.mono,
   },
   instructions: {
-    fontSize: 16,
-    color: '#666',
+    fontSize: FontSizes.sm,
+    color: Colors.terminal.cyan,
     textAlign: 'center',
-    lineHeight: 24,
-    paddingHorizontal: 20,
+    lineHeight: 20,
+    paddingHorizontal: Spacing.lg,
+    fontFamily: FontFamilies.mono,
   },
   warningContainer: {
-    marginTop: 20,
-    padding: 16,
-    backgroundColor: '#fff3cd',
-    borderRadius: 8,
+    marginTop: Spacing.lg,
+    padding: Spacing.md,
+    backgroundColor: Colors.terminal.darkGray,
+    borderRadius: BorderRadius.sm,
     borderWidth: 1,
-    borderColor: '#ffc107',
+    borderColor: Colors.terminal.amber,
   },
   warningText: {
-    fontSize: 14,
-    color: '#856404',
+    fontSize: FontSizes.sm,
+    color: Colors.terminal.amber,
     textAlign: 'center',
+    fontFamily: FontFamilies.mono,
   },
   controls: {
-    padding: 20,
-    gap: 12,
+    padding: Spacing.lg,
+    gap: Spacing.md,
   },
   button: {
-    padding: 16,
-    borderRadius: 8,
+    padding: Spacing.md,
+    borderRadius: BorderRadius.sm,
     alignItems: 'center',
+    borderWidth: 2,
   },
   startButton: {
-    backgroundColor: '#4caf50',
+    backgroundColor: 'rgba(0, 215, 135, 0.1)',
+    borderColor: Colors.terminal.green,
   },
   stopButton: {
-    backgroundColor: '#f44336',
+    backgroundColor: 'rgba(255, 107, 107, 0.1)',
+    borderColor: Colors.terminal.red,
   },
   resetButton: {
-    backgroundColor: '#ff9800',
+    backgroundColor: 'rgba(255, 180, 84, 0.1)',
+    borderColor: Colors.terminal.amber,
   },
   completeButton: {
-    backgroundColor: '#2196f3',
+    backgroundColor: 'rgba(0, 215, 135, 0.1)',
+    borderColor: Colors.terminal.green,
   },
   buttonText: {
-    color: '#fff',
-    fontSize: 18,
-    fontWeight: '600',
+    color: Colors.terminal.green,
+    fontSize: FontSizes.base,
+    fontWeight: FontWeights.bold,
+    fontFamily: FontFamilies.mono,
   },
 });

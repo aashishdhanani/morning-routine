@@ -183,7 +183,7 @@ const styles = StyleSheet.create({
     marginBottom: Spacing.xs,
   },
   title: {
-    fontSize: FontSizes.xxxl,
+    fontSize: FontSizes.xl,
     fontWeight: FontWeights.bold,
     color: Colors.terminal.green,
     fontFamily: FontFamilies.mono,

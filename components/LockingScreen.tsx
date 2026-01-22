@@ -9,19 +9,17 @@ import {
   BackHandler,
   ScrollView,
 } from 'react-native';
-import { LinearGradient } from 'expo-linear-gradient';
 import { RoutineManager } from '../services/RoutineManager';
 import { LockingService } from '../services/LockingService';
 import { HistoryManager } from '../services/HistoryManager';
 import RoutineChecklist from './RoutineChecklist';
 import {
   Colors,
-  Gradients,
   Spacing,
   BorderRadius,
   FontSizes,
   FontWeights,
-  Shadows,
+  FontFamilies,
 } from '../constants/theme';
 interface LockingScreenProps {
   visible: boolean;
@@ -156,20 +154,19 @@ export default function LockingScreen({
       }}
       presentationStyle="fullScreen"
     >
-      <LinearGradient
-        colors={isRoutineComplete ? (['#10B981', '#059669'] as const) : Gradients.primary}
-        start={{ x: 0, y: 0 }}
-        end={{ x: 1, y: 1 }}
-        style={styles.container}
-      >
+      <View style={styles.container}>
         {/* Header */}
         <View style={styles.header}>
-          <Text style={styles.headerTitle}>🔒 Morning Routine Locked</Text>
-          <Text style={styles.headerSubtitle}>
-            {isRoutineComplete
-              ? '🎉 Complete! Unlocking...'
-              : `Complete your routine to unlock (${routineManager.getCompletedCount()}/${routineManager.getTotalCount()})`}
-          </Text>
+          <View style={styles.headerBorder}>
+            <Text style={styles.headerTitle}>
+              {isRoutineComplete ? '$ SYSTEM_UNLOCKED' : '$ SYSTEM_LOCKED'}
+            </Text>
+            <Text style={styles.headerSubtitle}>
+              {isRoutineComplete
+                ? '> STATUS: ALL_TASKS_COMPLETE'
+                : `> TASKS_REQUIRED: ${routineManager.getCompletedCount()}/${routineManager.getTotalCount()}`}
+            </Text>
+          </View>
         </View>
 
         {/* Routine Checklist (embedded) */}
@@ -187,27 +184,20 @@ export default function LockingScreen({
         <View style={styles.footer}>
           {canEmergencyUnlock ? (
             <TouchableOpacity
-              style={[styles.emergencyButton, styles.emergencyButtonActive]}
+              style={styles.emergencyButton}
               onPress={handleEmergencyUnlock}
               activeOpacity={0.8}
             >
-              <LinearGradient
-                colors={['#EF4444', '#DC2626'] as const}
-                start={{ x: 0, y: 0 }}
-                end={{ x: 1, y: 1 }}
-                style={styles.emergencyButtonGradient}
-              >
-                <Text style={styles.emergencyButtonText}>⚠️ Emergency Unlock</Text>
-              </LinearGradient>
+              <Text style={styles.emergencyButtonText}>[!] EMERGENCY_OVERRIDE</Text>
             </TouchableOpacity>
           ) : (
             <View style={styles.timerContainer}>
-              <Text style={styles.timerLabel}>Emergency unlock available in</Text>
+              <Text style={styles.timerLabel}>$ OVERRIDE_AVAILABLE_IN:</Text>
               <Text style={styles.timerText}>{formatTimeRemaining(timeRemaining)}</Text>
             </View>
           )}
         </View>
-      </LinearGradient>
+      </View>
     </Modal>
   );
 }
@@ -215,25 +205,32 @@ export default function LockingScreen({
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    backgroundColor: Colors.background.primary,
   },
   header: {
     paddingTop: 60,
     paddingHorizontal: Spacing.lg,
     paddingBottom: Spacing.lg,
   },
+  headerBorder: {
+    borderWidth: 2,
+    borderColor: Colors.terminal.red,
+    borderRadius: BorderRadius.sm,
+    padding: Spacing.md,
+    backgroundColor: Colors.terminal.darkGray,
+  },
   headerTitle: {
-    fontSize: FontSizes.xxl,
-    fontWeight: FontWeights.extrabold,
-    color: Colors.neutral.white,
-    textAlign: 'center',
+    fontSize: FontSizes.lg,
+    fontWeight: FontWeights.bold,
+    color: Colors.terminal.red,
+    fontFamily: FontFamilies.mono,
     marginBottom: Spacing.xs,
   },
   headerSubtitle: {
-    fontSize: FontSizes.base,
-    fontWeight: FontWeights.medium,
-    color: Colors.neutral.white,
-    opacity: 0.9,
-    textAlign: 'center',
+    fontSize: FontSizes.sm,
+    fontWeight: FontWeights.normal,
+    color: Colors.terminal.amber,
+    fontFamily: FontFamilies.mono,
   },
   scrollView: {
     flex: 1,
@@ -249,40 +246,40 @@ const styles = StyleSheet.create({
     paddingBottom: Spacing.xl,
   },
   timerContainer: {
-    backgroundColor: 'rgba(255, 255, 255, 0.2)',
-    borderRadius: BorderRadius.lg,
-    padding: Spacing.lg,
+    borderWidth: 1,
+    borderColor: Colors.terminal.amber,
+    borderRadius: BorderRadius.sm,
+    backgroundColor: Colors.terminal.darkGray,
+    padding: Spacing.md,
     alignItems: 'center',
   },
   timerLabel: {
     fontSize: FontSizes.sm,
-    fontWeight: FontWeights.medium,
-    color: Colors.neutral.white,
-    opacity: 0.9,
-    marginBottom: Spacing.xs,
+    fontWeight: FontWeights.normal,
+    color: Colors.terminal.amber,
+    fontFamily: FontFamilies.mono,
+    marginBottom: Spacing.sm,
   },
   timerText: {
     fontSize: FontSizes.xxxl,
-    fontWeight: FontWeights.extrabold,
-    color: Colors.neutral.white,
+    fontWeight: FontWeights.bold,
+    color: Colors.terminal.red,
+    fontFamily: FontFamilies.mono,
     fontVariant: ['tabular-nums'],
   },
   emergencyButton: {
-    borderRadius: BorderRadius.lg,
-    overflow: 'hidden',
-    ...Shadows.lg,
-  },
-  emergencyButtonActive: {
-    opacity: 1,
-  },
-  emergencyButtonGradient: {
-    paddingVertical: Spacing.lg,
-    paddingHorizontal: Spacing.xl,
+    borderWidth: 2,
+    borderColor: Colors.terminal.red,
+    borderRadius: BorderRadius.sm,
+    backgroundColor: 'rgba(255, 107, 107, 0.1)',
+    paddingVertical: Spacing.md,
+    paddingHorizontal: Spacing.lg,
     alignItems: 'center',
   },
   emergencyButtonText: {
-    fontSize: FontSizes.lg,
+    fontSize: FontSizes.base,
     fontWeight: FontWeights.bold,
-    color: Colors.neutral.white,
+    color: Colors.terminal.red,
+    fontFamily: FontFamilies.mono,
   },
 });

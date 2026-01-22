@@ -9,7 +9,6 @@ import {
   ScrollView,
   Alert,
 } from 'react-native';
-import { LinearGradient } from 'expo-linear-gradient';
 import {
   SettingsManager,
   AppSettings,
@@ -18,12 +17,11 @@ import {
 } from '../services/SettingsManager';
 import {
   Colors,
-  Gradients,
   Spacing,
   BorderRadius,
   FontSizes,
   FontWeights,
-  Shadows,
+  FontFamilies,
 } from '../constants/theme';
 
 interface SettingsScreenProps {
@@ -141,46 +139,41 @@ export default function SettingsScreen({ visible, settingsManager, onClose }: Se
     >
       <View style={styles.container}>
         {/* Header */}
-        <LinearGradient
-          colors={Gradients.primary}
-          start={{ x: 0, y: 0 }}
-          end={{ x: 1, y: 1 }}
-          style={styles.header}
-        >
+        <View style={styles.header}>
           <TouchableOpacity onPress={handleClose} style={styles.closeButton}>
-            <Text style={styles.closeButtonText}>✕</Text>
+            <Text style={styles.closeButtonText}>[X]</Text>
           </TouchableOpacity>
-          <Text style={styles.headerTitle}>⚙️ Settings</Text>
+          <Text style={styles.headerTitle}>$ CONFIG</Text>
           <TouchableOpacity onPress={handleSave} style={styles.saveButton}>
-            <Text style={styles.saveButtonText}>Save</Text>
+            <Text style={styles.saveButtonText}>SAVE</Text>
           </TouchableOpacity>
-        </LinearGradient>
+        </View>
 
         <ScrollView style={styles.scrollView} contentContainerStyle={styles.scrollContent}>
           {/* Global Locking Toggle */}
           <View style={styles.section}>
-            <Text style={styles.sectionTitle}>Locking</Text>
+            <Text style={styles.sectionTitle}>$ LOCKING_CONFIG:</Text>
             <View style={styles.settingRow}>
               <View style={styles.settingInfo}>
-                <Text style={styles.settingLabel}>Enable App Locking</Text>
+                <Text style={styles.settingLabel}>ENABLE_LOCK</Text>
                 <Text style={styles.settingDescription}>
-                  Lock app until routine is complete during morning hours
+                  {'>'} Lock system until tasks complete
                 </Text>
               </View>
               <Switch
                 value={settings.lockingEnabled}
                 onValueChange={toggleLocking}
-                trackColor={{ false: Colors.neutral.gray400, true: Colors.accent.green }}
-                thumbColor={Colors.neutral.white}
+                trackColor={{ false: Colors.terminal.gray, true: Colors.terminal.green }}
+                thumbColor={Colors.terminal.brightGreen}
               />
             </View>
           </View>
 
           {/* Schedule Configuration */}
           <View style={styles.section}>
-            <Text style={styles.sectionTitle}>Weekly Schedule</Text>
+            <Text style={styles.sectionTitle}>$ SCHEDULE_CONFIG:</Text>
             <Text style={styles.sectionDescription}>
-              Configure when your routine is active each day
+              {'>'} Set active hours per day
             </Text>
 
             {DAY_NAMES.map((dayName, index) => {
@@ -188,12 +181,12 @@ export default function SettingsScreen({ visible, settingsManager, onClose }: Se
               return (
                 <View key={index} style={styles.dayCard}>
                   <View style={styles.dayHeader}>
-                    <Text style={styles.dayName}>{dayName}</Text>
+                    <Text style={styles.dayName}>{dayName.toUpperCase()}</Text>
                     <Switch
                       value={schedule.enabled}
                       onValueChange={(enabled) => updateDaySchedule(index, { enabled })}
-                      trackColor={{ false: Colors.neutral.gray400, true: Colors.accent.green }}
-                      thumbColor={Colors.neutral.white}
+                      trackColor={{ false: Colors.terminal.gray, true: Colors.terminal.green }}
+                      thumbColor={Colors.terminal.brightGreen}
                     />
                   </View>
 
@@ -217,8 +210,8 @@ export default function SettingsScreen({ visible, settingsManager, onClose }: Se
 
           {/* Reset Behavior */}
           <View style={styles.section}>
-            <Text style={styles.sectionTitle}>Daily Reset</Text>
-            <Text style={styles.sectionDescription}>When should the routine reset each day?</Text>
+            <Text style={styles.sectionTitle}>$ RESET_TIME:</Text>
+            <Text style={styles.sectionDescription}>{'>'} When to reset tasks</Text>
 
             <TouchableOpacity
               style={[
@@ -227,12 +220,12 @@ export default function SettingsScreen({ visible, settingsManager, onClose }: Se
               ]}
               onPress={() => updateResetBehavior('midnight')}
             >
-              <View style={styles.radioButton}>
-                {settings.resetBehavior === 'midnight' && <View style={styles.radioButtonInner} />}
-              </View>
+              <Text style={styles.radioButton}>
+                {settings.resetBehavior === 'midnight' ? '[●]' : '[ ]'}
+              </Text>
               <View style={styles.optionInfo}>
-                <Text style={styles.optionLabel}>Midnight (00:00)</Text>
-                <Text style={styles.optionDescription}>Reset at 12:00 AM every day</Text>
+                <Text style={styles.optionLabel}>MIDNIGHT (00:00)</Text>
+                <Text style={styles.optionDescription}>{'>'} Reset at 12:00 AM daily</Text>
               </View>
             </TouchableOpacity>
 
@@ -243,13 +236,13 @@ export default function SettingsScreen({ visible, settingsManager, onClose }: Se
               ]}
               onPress={() => updateResetBehavior('morning')}
             >
-              <View style={styles.radioButton}>
-                {settings.resetBehavior === 'morning' && <View style={styles.radioButtonInner} />}
-              </View>
+              <Text style={styles.radioButton}>
+                {settings.resetBehavior === 'morning' ? '[●]' : '[ ]'}
+              </Text>
               <View style={styles.optionInfo}>
-                <Text style={styles.optionLabel}>Morning Window Start</Text>
+                <Text style={styles.optionLabel}>MORNING_START</Text>
                 <Text style={styles.optionDescription}>
-                  Reset when your morning routine window begins
+                  {'>'} Reset when window begins
                 </Text>
               </View>
             </TouchableOpacity>
@@ -257,25 +250,25 @@ export default function SettingsScreen({ visible, settingsManager, onClose }: Se
 
           {/* Emergency Unlock Delay */}
           <View style={styles.section}>
-            <Text style={styles.sectionTitle}>Emergency Unlock</Text>
+            <Text style={styles.sectionTitle}>$ OVERRIDE_DELAY:</Text>
             <Text style={styles.sectionDescription}>
-              Time before emergency unlock becomes available
+              {'>'} Time before emergency override
             </Text>
 
             <View style={styles.sliderCard}>
-              <Text style={styles.sliderValue}>{settings.emergencyUnlockDelay} minutes</Text>
+              <Text style={styles.sliderValue}>{settings.emergencyUnlockDelay} MIN</Text>
               <View style={styles.sliderButtons}>
                 <TouchableOpacity
                   style={styles.sliderButton}
                   onPress={() => updateEmergencyDelay(settings.emergencyUnlockDelay - 1)}
                 >
-                  <Text style={styles.sliderButtonText}>−</Text>
+                  <Text style={styles.sliderButtonText}>[-]</Text>
                 </TouchableOpacity>
                 <TouchableOpacity
                   style={styles.sliderButton}
                   onPress={() => updateEmergencyDelay(settings.emergencyUnlockDelay + 1)}
                 >
-                  <Text style={styles.sliderButtonText}>+</Text>
+                  <Text style={styles.sliderButtonText}>[+]</Text>
                 </TouchableOpacity>
               </View>
             </View>
@@ -289,7 +282,7 @@ export default function SettingsScreen({ visible, settingsManager, onClose }: Se
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: Colors.background.primary,
   },
   header: {
     flexDirection: 'row',
@@ -298,35 +291,42 @@ const styles = StyleSheet.create({
     paddingTop: 60,
     paddingHorizontal: Spacing.lg,
     paddingBottom: Spacing.lg,
+    backgroundColor: Colors.terminal.darkGray,
+    borderBottomWidth: 1,
+    borderBottomColor: Colors.terminal.green,
   },
   closeButton: {
-    width: 40,
-    height: 40,
-    justifyContent: 'center',
-    alignItems: 'center',
+    paddingHorizontal: Spacing.sm,
+    paddingVertical: Spacing.xs,
+    borderWidth: 1,
+    borderColor: Colors.terminal.red,
+    borderRadius: BorderRadius.sm,
   },
   closeButtonText: {
-    fontSize: FontSizes.xxl,
-    color: Colors.neutral.white,
+    fontSize: FontSizes.sm,
+    color: Colors.terminal.red,
+    fontFamily: FontFamilies.mono,
     fontWeight: FontWeights.bold,
   },
   headerTitle: {
-    fontSize: FontSizes.xxl,
-    fontWeight: FontWeights.extrabold,
-    color: Colors.neutral.white,
+    fontSize: FontSizes.xl,
+    fontWeight: FontWeights.bold,
+    color: Colors.terminal.green,
+    fontFamily: FontFamilies.mono,
   },
   saveButton: {
-    width: 60,
-    height: 40,
-    justifyContent: 'center',
-    alignItems: 'center',
-    backgroundColor: 'rgba(255, 255, 255, 0.2)',
-    borderRadius: BorderRadius.md,
+    paddingHorizontal: Spacing.sm,
+    paddingVertical: Spacing.xs,
+    borderWidth: 1,
+    borderColor: Colors.terminal.green,
+    borderRadius: BorderRadius.sm,
+    backgroundColor: 'rgba(0, 215, 135, 0.1)',
   },
   saveButtonText: {
-    fontSize: FontSizes.base,
+    fontSize: FontSizes.sm,
     fontWeight: FontWeights.bold,
-    color: Colors.neutral.white,
+    color: Colors.terminal.green,
+    fontFamily: FontFamilies.mono,
   },
   scrollView: {
     flex: 1,
@@ -339,47 +339,52 @@ const styles = StyleSheet.create({
     marginBottom: Spacing.xl,
   },
   sectionTitle: {
-    fontSize: FontSizes.lg,
+    fontSize: FontSizes.base,
     fontWeight: FontWeights.bold,
-    color: Colors.neutral.gray900,
+    color: Colors.terminal.cyan,
+    fontFamily: FontFamilies.mono,
     marginBottom: Spacing.xs,
   },
   sectionDescription: {
     fontSize: FontSizes.sm,
-    color: Colors.neutral.gray600,
+    color: Colors.terminal.amber,
+    fontFamily: FontFamilies.mono,
     marginBottom: Spacing.md,
-    lineHeight: 20,
   },
   settingRow: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    backgroundColor: Colors.neutral.white,
+    backgroundColor: Colors.terminal.darkGray,
+    borderWidth: 1,
+    borderColor: Colors.terminal.gray,
     padding: Spacing.md,
-    borderRadius: BorderRadius.lg,
-    ...Shadows.sm,
+    borderRadius: BorderRadius.sm,
   },
   settingInfo: {
     flex: 1,
     marginRight: Spacing.md,
   },
   settingLabel: {
-    fontSize: FontSizes.base,
-    fontWeight: FontWeights.semibold,
-    color: Colors.neutral.gray900,
+    fontSize: FontSizes.sm,
+    fontWeight: FontWeights.bold,
+    color: Colors.terminal.green,
+    fontFamily: FontFamilies.mono,
     marginBottom: Spacing.xs,
   },
   settingDescription: {
-    fontSize: FontSizes.sm,
-    color: Colors.neutral.gray600,
-    lineHeight: 18,
+    fontSize: FontSizes.xs,
+    color: Colors.terminal.cyan,
+    fontFamily: FontFamilies.mono,
+    lineHeight: 16,
   },
   dayCard: {
-    backgroundColor: Colors.neutral.white,
-    borderRadius: BorderRadius.lg,
+    backgroundColor: Colors.terminal.darkGray,
+    borderWidth: 1,
+    borderColor: Colors.terminal.gray,
+    borderRadius: BorderRadius.sm,
     padding: Spacing.md,
     marginBottom: Spacing.sm,
-    ...Shadows.sm,
   },
   dayHeader: {
     flexDirection: 'row',
@@ -387,9 +392,10 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   dayName: {
-    fontSize: FontSizes.base,
-    fontWeight: FontWeights.semibold,
-    color: Colors.neutral.gray900,
+    fontSize: FontSizes.sm,
+    fontWeight: FontWeights.bold,
+    color: Colors.terminal.green,
+    fontFamily: FontFamilies.mono,
   },
   dayTimes: {
     flexDirection: 'row',
@@ -397,84 +403,80 @@ const styles = StyleSheet.create({
     marginTop: Spacing.md,
     paddingTop: Spacing.md,
     borderTopWidth: 1,
-    borderTopColor: Colors.neutral.gray200,
+    borderTopColor: Colors.terminal.gray,
   },
   timeGroup: {
     flex: 1,
   },
   timeLabel: {
     fontSize: FontSizes.xs,
-    color: Colors.neutral.gray600,
+    color: Colors.terminal.cyan,
+    fontFamily: FontFamilies.mono,
     marginBottom: Spacing.xs,
-    textTransform: 'uppercase',
-    letterSpacing: 0.5,
   },
   timeValue: {
-    fontSize: FontSizes.xl,
+    fontSize: FontSizes.lg,
     fontWeight: FontWeights.bold,
-    color: Colors.neutral.gray900,
+    color: Colors.terminal.green,
+    fontFamily: FontFamilies.mono,
     fontVariant: ['tabular-nums'],
   },
   timeSeparator: {
-    fontSize: FontSizes.xl,
-    color: Colors.neutral.gray400,
+    fontSize: FontSizes.lg,
+    color: Colors.terminal.amber,
+    fontFamily: FontFamilies.mono,
     marginHorizontal: Spacing.md,
   },
   optionCard: {
     flexDirection: 'row',
-    alignItems: 'center',
-    backgroundColor: Colors.neutral.white,
-    borderRadius: BorderRadius.lg,
+    alignItems: 'flex-start',
+    backgroundColor: Colors.terminal.darkGray,
+    borderRadius: BorderRadius.sm,
     padding: Spacing.md,
     marginBottom: Spacing.sm,
-    borderWidth: 2,
-    borderColor: 'transparent',
-    ...Shadows.sm,
+    borderWidth: 1,
+    borderColor: Colors.terminal.gray,
   },
   optionCardSelected: {
-    borderColor: Colors.accent.purple,
+    borderColor: Colors.terminal.green,
+    backgroundColor: 'rgba(0, 215, 135, 0.05)',
   },
   radioButton: {
-    width: 24,
-    height: 24,
-    borderRadius: BorderRadius.full,
-    borderWidth: 2,
-    borderColor: Colors.neutral.gray400,
-    justifyContent: 'center',
-    alignItems: 'center',
-    marginRight: Spacing.md,
-  },
-  radioButtonInner: {
-    width: 12,
-    height: 12,
-    borderRadius: BorderRadius.full,
-    backgroundColor: Colors.accent.purple,
+    fontSize: FontSizes.base,
+    color: Colors.terminal.green,
+    fontFamily: FontFamilies.mono,
+    marginRight: Spacing.sm,
+    marginTop: 2,
   },
   optionInfo: {
     flex: 1,
   },
   optionLabel: {
-    fontSize: FontSizes.base,
-    fontWeight: FontWeights.semibold,
-    color: Colors.neutral.gray900,
+    fontSize: FontSizes.sm,
+    fontWeight: FontWeights.bold,
+    color: Colors.terminal.green,
+    fontFamily: FontFamilies.mono,
     marginBottom: Spacing.xs,
   },
   optionDescription: {
-    fontSize: FontSizes.sm,
-    color: Colors.neutral.gray600,
-    lineHeight: 18,
+    fontSize: FontSizes.xs,
+    color: Colors.terminal.cyan,
+    fontFamily: FontFamilies.mono,
+    lineHeight: 16,
   },
   sliderCard: {
-    backgroundColor: Colors.neutral.white,
-    borderRadius: BorderRadius.lg,
-    padding: Spacing.lg,
+    backgroundColor: Colors.terminal.darkGray,
+    borderWidth: 1,
+    borderColor: Colors.terminal.gray,
+    borderRadius: BorderRadius.sm,
+    padding: Spacing.md,
     alignItems: 'center',
-    ...Shadows.sm,
   },
   sliderValue: {
-    fontSize: FontSizes.xxxl,
-    fontWeight: FontWeights.extrabold,
-    color: Colors.neutral.gray900,
+    fontSize: FontSizes.xxl,
+    fontWeight: FontWeights.bold,
+    color: Colors.terminal.green,
+    fontFamily: FontFamilies.mono,
     marginBottom: Spacing.md,
   },
   sliderButtons: {
@@ -482,17 +484,17 @@ const styles = StyleSheet.create({
     gap: Spacing.md,
   },
   sliderButton: {
-    width: 50,
-    height: 50,
-    borderRadius: BorderRadius.full,
-    backgroundColor: Colors.accent.purple,
-    justifyContent: 'center',
-    alignItems: 'center',
-    ...Shadows.md,
+    paddingHorizontal: Spacing.md,
+    paddingVertical: Spacing.sm,
+    borderWidth: 1,
+    borderColor: Colors.terminal.green,
+    borderRadius: BorderRadius.sm,
+    backgroundColor: 'rgba(0, 215, 135, 0.1)',
   },
   sliderButtonText: {
-    fontSize: FontSizes.xxl,
+    fontSize: FontSizes.base,
     fontWeight: FontWeights.bold,
-    color: Colors.neutral.white,
+    color: Colors.terminal.green,
+    fontFamily: FontFamilies.mono,
   },
 });
