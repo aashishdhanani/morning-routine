@@ -8,8 +8,7 @@ import PushupTrackingScreen from './PushupTrackingScreen';
 // Temporarily disabled due to expo-file-system compatibility issues in Expo Go
 // import PhotoCaptureScreen from './PhotoCaptureScreen';
 import HistoryCard from './HistoryCard';
-import { CalendarEmailService } from '../services/CalendarEmailService';
-import { MusicService } from '../services/MusicService';
+// CalendarEmailService and MusicService removed - calendar and music are now simple checkboxes
 import {
   Colors,
   Gradients,
@@ -58,74 +57,8 @@ export default function RoutineChecklist({
       return;
     }
 
-    // If it's calendar/emails, open calendar and mail apps
-    if (item === RoutineItem.CALENDAR_EMAILS) {
-      Alert.alert(
-        '📅 Calendar & Emails',
-        'Open your calendar and email apps to review your schedule?',
-        [
-          {
-            text: 'Open Calendar',
-            onPress: async () => {
-              await CalendarEmailService.openCalendar();
-              // Mark as complete after opening
-              await routineManager.markComplete(item);
-              setRefreshKey((prev) => prev + 1);
-            },
-          },
-          {
-            text: 'Open Mail',
-            onPress: async () => {
-              await CalendarEmailService.openMail();
-              // Mark as complete after opening
-              await routineManager.markComplete(item);
-              setRefreshKey((prev) => prev + 1);
-            },
-          },
-          {
-            text: 'Mark as Done',
-            style: 'default',
-            onPress: async () => {
-              await routineManager.markComplete(item);
-              setRefreshKey((prev) => prev + 1);
-            },
-          },
-          {
-            text: 'Cancel',
-            style: 'cancel',
-          },
-        ]
-      );
-      return;
-    }
-
-    // If it's music, show music app options
-    if (item === RoutineItem.MUSIC) {
-      Alert.alert('🎵 Music', 'Open your music app to start playing music?', [
-        {
-          text: 'Open Music App',
-          onPress: async () => {
-            await MusicService.openMusicApp();
-            // Mark as complete after opening
-            await routineManager.markComplete(item);
-            setRefreshKey((prev) => prev + 1);
-          },
-        },
-        {
-          text: 'Mark as Done',
-          style: 'default',
-          onPress: async () => {
-            await routineManager.markComplete(item);
-            setRefreshKey((prev) => prev + 1);
-          },
-        },
-        {
-          text: 'Cancel',
-          style: 'cancel',
-        },
-      ]);
-      return;
-    }
+    // Calendar, emails, and music are now simple yes/no checkboxes
+    // No special behavior - just toggle completion like other items
 
     // For other items, just toggle
     await routineManager.toggleItem(item);
