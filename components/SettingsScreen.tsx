@@ -8,7 +8,9 @@ import {
   Switch,
   ScrollView,
   Alert,
+  Platform,
 } from 'react-native';
+import DateTimePicker from '@react-native-community/datetimepicker';
 import {
   SettingsManager,
   AppSettings,
@@ -35,6 +37,10 @@ const DAY_NAMES = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Frid
 export default function SettingsScreen({ visible, settingsManager, onClose }: SettingsScreenProps) {
   const [settings, setSettings] = useState<AppSettings | null>(null);
   const [hasChanges, setHasChanges] = useState(false);
+  const [showTimePicker, setShowTimePicker] = useState<{
+    day: number;
+    type: 'start' | 'end';
+  } | null>(null);
 
   useEffect(() => {
     if (visible) {
@@ -126,6 +132,45 @@ export default function SettingsScreen({ visible, settingsManager, onClose }: Se
     setHasChanges(true);
   };
 
+  const parseTimeString = (timeStr: string): Date => {
+    const [hours, minutes] = timeStr.split(':').map(Number);
+    const date = new Date();
+    date.setHours(hours, minutes, 0, 0);
+    return date;
+  };
+
+  const formatTimeString = (date: Date): string => {
+    const hours = date.getHours().toString().padStart(2, '0');
+    const minutes = date.getMinutes().toString().padStart(2, '0');
+    return `${hours}:${minutes}`;
+  };
+
+  const handleTimeChange = (event: any, selectedDate?: Date) => {
+    if (Platform.OS === 'android') {
+      setShowTimePicker(null);
+    }
+
+    if (event.type === 'dismissed' || !selectedDate || !showTimePicker) {
+      if (Platform.OS === 'android') {
+        setShowTimePicker(null);
+      }
+      return;
+    }
+
+    const timeStr = formatTimeString(selectedDate);
+    const { day, type } = showTimePicker;
+
+    updateDaySchedule(day, {
+      [type === 'start' ? 'startTime' : 'endTime']: timeStr,
+    });
+
+    if (Platform.OS === 'ios') {
+      // On iOS, keep picker open until user taps outside
+    } else {
+      setShowTimePicker(null);
+    }
+  };
+
   if (!settings) {
     return null;
   }
@@ -192,15 +237,21 @@ export default function SettingsScreen({ visible, settingsManager, onClose }: Se
 
                   {schedule.enabled && (
                     <View style={styles.dayTimes}>
-                      <View style={styles.timeGroup}>
+                      <TouchableOpacity
+                        style={styles.timeGroup}
+                        onPress={() => setShowTimePicker({ day: index, type: 'start' })}
+                      >
                         <Text style={styles.timeLabel}>Start</Text>
                         <Text style={styles.timeValue}>{schedule.startTime}</Text>
-                      </View>
+                      </TouchableOpacity>
                       <Text style={styles.timeSeparator}>→</Text>
-                      <View style={styles.timeGroup}>
+                      <TouchableOpacity
+                        style={styles.timeGroup}
+                        onPress={() => setShowTimePicker({ day: index, type: 'end' })}
+                      >
                         <Text style={styles.timeLabel}>End</Text>
                         <Text style={styles.timeValue}>{schedule.endTime}</Text>
-                      </View>
+                      </TouchableOpacity>
                     </View>
                   )}
                 </View>
@@ -274,6 +325,56 @@ export default function SettingsScreen({ visible, settingsManager, onClose }: Se
             </View>
           </View>
         </ScrollView>
+
+        {/* Time Picker */}
+        {showTimePicker && settings && (
+          <>
+            {Platform.OS === 'ios' && (
+              <TouchableOpacity
+                style={styles.pickerOverlay}
+                activeOpacity={1}
+                onPress={() => setShowTimePicker(null)}
+              >
+                <View style={styles.pickerContainer}>
+                  <View style={styles.pickerHeader}>
+                    <Text style={styles.pickerTitle}>
+                      {showTimePicker.type === 'start' ? 'START_TIME' : 'END_TIME'}
+                    </Text>
+                    <TouchableOpacity
+                      onPress={() => setShowTimePicker(null)}
+                      style={styles.pickerDoneButton}
+                    >
+                      <Text style={styles.pickerDoneText}>DONE</Text>
+                    </TouchableOpacity>
+                  </View>
+                  <DateTimePicker
+                    value={parseTimeString(
+                      settings.schedule[showTimePicker.day][
+                        showTimePicker.type === 'start' ? 'startTime' : 'endTime'
+                      ]
+                    )}
+                    mode="time"
+                    display="spinner"
+                    onChange={handleTimeChange}
+                    textColor={Colors.terminal.green}
+                  />
+                </View>
+              </TouchableOpacity>
+            )}
+            {Platform.OS === 'android' && (
+              <DateTimePicker
+                value={parseTimeString(
+                  settings.schedule[showTimePicker.day][
+                    showTimePicker.type === 'start' ? 'startTime' : 'endTime'
+                  ]
+                )}
+                mode="time"
+                display="default"
+                onChange={handleTimeChange}
+              />
+            )}
+          </>
+        )}
       </View>
     </Modal>
   );
@@ -407,6 +508,11 @@ const styles = StyleSheet.create({
   },
   timeGroup: {
     flex: 1,
+    borderWidth: 1,
+    borderColor: Colors.terminal.gray,
+    backgroundColor: Colors.terminal.black,
+    padding: Spacing.sm,
+    borderRadius: BorderRadius.sm,
   },
   timeLabel: {
     fontSize: FontSizes.xs,
@@ -493,6 +599,50 @@ const styles = StyleSheet.create({
   },
   sliderButtonText: {
     fontSize: FontSizes.base,
+    fontWeight: FontWeights.bold,
+    color: Colors.terminal.green,
+    fontFamily: FontFamilies.mono,
+  },
+  pickerOverlay: {
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    backgroundColor: 'rgba(0, 0, 0, 0.7)',
+    justifyContent: 'flex-end',
+  },
+  pickerContainer: {
+    backgroundColor: Colors.terminal.darkGray,
+    borderTopWidth: 2,
+    borderTopColor: Colors.terminal.green,
+    paddingBottom: 40,
+  },
+  pickerHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingHorizontal: Spacing.lg,
+    paddingVertical: Spacing.md,
+    borderBottomWidth: 1,
+    borderBottomColor: Colors.terminal.gray,
+  },
+  pickerTitle: {
+    fontSize: FontSizes.base,
+    fontWeight: FontWeights.bold,
+    color: Colors.terminal.cyan,
+    fontFamily: FontFamilies.mono,
+  },
+  pickerDoneButton: {
+    paddingHorizontal: Spacing.md,
+    paddingVertical: Spacing.sm,
+    borderWidth: 1,
+    borderColor: Colors.terminal.green,
+    borderRadius: BorderRadius.sm,
+    backgroundColor: 'rgba(0, 215, 135, 0.1)',
+  },
+  pickerDoneText: {
+    fontSize: FontSizes.sm,
     fontWeight: FontWeights.bold,
     color: Colors.terminal.green,
     fontFamily: FontFamilies.mono,
