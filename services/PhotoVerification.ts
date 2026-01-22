@@ -1,5 +1,5 @@
 import * as ImagePicker from 'expo-image-picker';
-import { Paths, Directory, File } from 'expo-file-system';
+import * as FileSystem from 'expo-file-system';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export interface PhotoRecord {
@@ -11,19 +11,19 @@ export interface PhotoRecord {
 const STORAGE_KEY = 'photoVerificationRecords';
 
 export class PhotoVerification {
-  private photosDirectory: Directory;
+  private photosDirectory: string;
 
   constructor() {
-    this.photosDirectory = new Directory(Paths.document, 'routine-photos');
+    this.photosDirectory = `${FileSystem.documentDirectory}routine-photos/`;
   }
 
   /**
    * Initialize the photos directory
    */
   async initialize(): Promise<void> {
-    const exists = await this.photosDirectory.exists;
-    if (!exists) {
-      await this.photosDirectory.create();
+    const dirInfo = await FileSystem.getInfoAsync(this.photosDirectory);
+    if (!dirInfo.exists) {
+      await FileSystem.makeDirectoryAsync(this.photosDirectory, { intermediates: true });
     }
   }
 
@@ -79,14 +79,16 @@ export class PhotoVerification {
       // Save the photo to our directory
       const timestamp = Date.now();
       const filename = `${routineItem.replace(/\s+/g, '_')}_${timestamp}.jpg`;
-      const destinationFile = new File(this.photosDirectory, filename);
+      const destinationUri = `${this.photosDirectory}${filename}`;
 
       // Copy the file
-      const sourceFile = new File(result.assets[0].uri);
-      await sourceFile.copy(destinationFile);
+      await FileSystem.copyAsync({
+        from: result.assets[0].uri,
+        to: destinationUri,
+      });
 
       const record: PhotoRecord = {
-        uri: destinationFile.uri,
+        uri: destinationUri,
         timestamp,
         routineItem,
       };
@@ -126,14 +128,16 @@ export class PhotoVerification {
       // Save the photo to our directory
       const timestamp = Date.now();
       const filename = `${routineItem.replace(/\s+/g, '_')}_${timestamp}.jpg`;
-      const destinationFile = new File(this.photosDirectory, filename);
+      const destinationUri = `${this.photosDirectory}${filename}`;
 
       // Copy the file
-      const sourceFile = new File(result.assets[0].uri);
-      await sourceFile.copy(destinationFile);
+      await FileSystem.copyAsync({
+        from: result.assets[0].uri,
+        to: destinationUri,
+      });
 
       const record: PhotoRecord = {
-        uri: destinationFile.uri,
+        uri: destinationUri,
         timestamp,
         routineItem,
       };
@@ -221,9 +225,9 @@ export class PhotoVerification {
   async deletePhoto(record: PhotoRecord): Promise<void> {
     try {
       // Delete the file
-      const file = new File(record.uri);
-      if (await file.exists) {
-        await file.delete();
+      const fileInfo = await FileSystem.getInfoAsync(record.uri);
+      if (fileInfo.exists) {
+        await FileSystem.deleteAsync(record.uri);
       }
 
       // Remove from records
@@ -270,8 +274,7 @@ export class PhotoVerification {
       let totalSize = 0;
 
       for (const record of records) {
-        const file = new File(record.uri);
-        const info = await file.info();
+        const info = await FileSystem.getInfoAsync(record.uri);
         if (info.exists && info.size !== undefined) {
           totalSize += info.size;
         }
