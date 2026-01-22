@@ -8,7 +8,15 @@ import { RoutineManager } from '../services/RoutineManager';
 import { SettingsManager } from '../services/SettingsManager';
 import { HistoryManager } from '../services/HistoryManager';
 import { LockingService } from '../services/LockingService';
-import { Colors, Gradients, FontSizes, FontWeights, Spacing } from '../constants/theme';
+import {
+  Colors,
+  Gradients,
+  FontSizes,
+  FontWeights,
+  Spacing,
+  FontFamilies,
+  BorderRadius,
+} from '../constants/theme';
 
 export default function HomeScreen() {
   const routineManager = useMemo(() => new RoutineManager(), []);
@@ -82,35 +90,32 @@ export default function HomeScreen() {
 
   const currentHour = new Date().getHours();
   const greeting =
-    currentHour < 12 ? 'Good Morning' : currentHour < 18 ? 'Good Afternoon' : 'Good Evening';
+    currentHour < 12 ? 'GOOD_MORNING' : currentHour < 18 ? 'GOOD_AFTERNOON' : 'GOOD_EVENING';
 
   if (!isInitialized) {
     return (
       <View style={[styles.container, styles.loadingContainer]}>
-        <Text style={styles.loadingText}>Loading...</Text>
+        <Text style={styles.loadingText}>$ INITIALIZING...</Text>
       </View>
     );
   }
 
   return (
     <View style={styles.container}>
-      <LinearGradient
-        colors={Gradients.primary}
-        start={{ x: 0, y: 0 }}
-        end={{ x: 1, y: 1 }}
-        style={styles.header}
-      >
-        <View style={styles.headerTop}>
-          <View style={styles.headerTextContainer}>
-            <Text style={styles.greeting}>{greeting} ✨</Text>
-            <Text style={styles.title}>Morning Routine</Text>
-            <Text style={styles.subtitle}>Let's start your day right</Text>
+      <View style={styles.header}>
+        <View style={styles.terminalBorder}>
+          <View style={styles.headerTop}>
+            <View style={styles.headerTextContainer}>
+              <Text style={styles.greeting}>{'>'} {greeting}</Text>
+              <Text style={styles.title}>$ MORNING_ROUTINE</Text>
+              <Text style={styles.subtitle}>{'>'} RUN DAILY_TASKS.SH</Text>
+            </View>
+            <TouchableOpacity style={styles.settingsButton} onPress={() => setShowSettings(true)}>
+              <Text style={styles.settingsIcon}>[⚙]</Text>
+            </TouchableOpacity>
           </View>
-          <TouchableOpacity style={styles.settingsButton} onPress={() => setShowSettings(true)}>
-            <Text style={styles.settingsIcon}>⚙️</Text>
-          </TouchableOpacity>
         </View>
-      </LinearGradient>
+      </View>
 
       <ScrollView style={styles.scrollView} showsVerticalScrollIndicator={false}>
         <RoutineChecklist routineManager={routineManager} historyManager={historyManager} />
@@ -138,7 +143,7 @@ export default function HomeScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: Colors.background.secondary,
+    backgroundColor: Colors.background.primary,
   },
   loadingContainer: {
     justifyContent: 'center',
@@ -146,12 +151,21 @@ const styles = StyleSheet.create({
   },
   loadingText: {
     fontSize: FontSizes.lg,
-    color: Colors.neutral.gray600,
+    color: Colors.terminal.green,
+    fontFamily: FontFamilies.mono,
   },
   header: {
     paddingTop: 60,
     paddingBottom: Spacing.xl,
     paddingHorizontal: Spacing.lg,
+    backgroundColor: Colors.background.primary,
+  },
+  terminalBorder: {
+    borderWidth: 2,
+    borderColor: Colors.terminal.green,
+    borderRadius: BorderRadius.sm,
+    padding: Spacing.md,
+    backgroundColor: Colors.terminal.darkGray,
   },
   headerTop: {
     flexDirection: 'row',
@@ -162,35 +176,40 @@ const styles = StyleSheet.create({
     flex: 1,
   },
   greeting: {
-    fontSize: FontSizes.lg,
-    fontWeight: FontWeights.medium,
-    color: Colors.neutral.white,
-    opacity: 0.9,
+    fontSize: FontSizes.sm,
+    fontWeight: FontWeights.normal,
+    color: Colors.terminal.cyan,
+    fontFamily: FontFamilies.mono,
     marginBottom: Spacing.xs,
   },
   title: {
-    fontSize: FontSizes.display,
-    fontWeight: FontWeights.extrabold,
-    color: Colors.neutral.white,
+    fontSize: FontSizes.xxxl,
+    fontWeight: FontWeights.bold,
+    color: Colors.terminal.green,
+    fontFamily: FontFamilies.mono,
     marginBottom: Spacing.xs,
   },
   subtitle: {
-    fontSize: FontSizes.base,
+    fontSize: FontSizes.sm,
     fontWeight: FontWeights.normal,
-    color: Colors.neutral.white,
-    opacity: 0.8,
+    color: Colors.terminal.amber,
+    fontFamily: FontFamilies.mono,
   },
   settingsButton: {
-    width: 44,
-    height: 44,
-    borderRadius: 22,
-    backgroundColor: 'rgba(255, 255, 255, 0.2)',
+    paddingHorizontal: Spacing.sm,
+    paddingVertical: Spacing.xs,
+    borderWidth: 1,
+    borderColor: Colors.terminal.green,
+    borderRadius: BorderRadius.sm,
+    backgroundColor: 'rgba(0, 215, 135, 0.1)',
     justifyContent: 'center',
     alignItems: 'center',
     marginLeft: Spacing.md,
   },
   settingsIcon: {
-    fontSize: 24,
+    fontSize: 16,
+    color: Colors.terminal.green,
+    fontFamily: FontFamilies.mono,
   },
   scrollView: {
     flex: 1,

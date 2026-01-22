@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, StyleSheet, TouchableOpacity, Alert } from 'react-native';
-import { LinearGradient } from 'expo-linear-gradient';
 import { RoutineManager } from '../services/RoutineManager';
 import { RoutineItem, ROUTINE_ITEM_INFO } from '../types/RoutineItem';
 import { HistoryManager } from '../services/HistoryManager';
@@ -11,12 +10,12 @@ import HistoryCard from './HistoryCard';
 // CalendarEmailService and MusicService removed - calendar and music are now simple checkboxes
 import {
   Colors,
-  Gradients,
   Spacing,
   BorderRadius,
   FontSizes,
   FontWeights,
   Shadows,
+  FontFamilies,
 } from '../constants/theme';
 
 interface RoutineChecklistProps {
@@ -102,22 +101,6 @@ export default function RoutineChecklist({
     }
   };
 
-  const getItemGradient = (item: RoutineItem): readonly [string, string, ...string[]] => {
-    switch (item) {
-      case RoutineItem.PUSHUPS:
-        return ['#EC4899', '#EF4444'] as const;
-      case RoutineItem.COFFEE_BREAKFAST:
-        return ['#F59E0B', '#EF4444'] as const;
-      case RoutineItem.WATER:
-        return ['#06B6D4', '#3B82F6'] as const;
-      case RoutineItem.CALENDAR_EMAILS:
-        return ['#8B5CF6', '#6366F1'] as const;
-      case RoutineItem.MUSIC:
-        return ['#A855F7', '#EC4899'] as const;
-      default:
-        return Gradients.primary;
-    }
-  };
 
   return (
     <View style={styles.container}>
@@ -128,54 +111,34 @@ export default function RoutineChecklist({
         const isCompleted = routineManager.isCompleted(item);
         const info = ROUTINE_ITEM_INFO[item];
         const icon = getItemIcon(item);
-        const gradient = getItemGradient(item);
 
         return (
           <TouchableOpacity
             key={item}
-            style={[styles.item, isCompleted && styles.itemCompleted]}
+            style={[
+              styles.item,
+              isCompleted && styles.itemCompleted,
+            ]}
             onPress={() => handleItemPress(item)}
             activeOpacity={0.8}
           >
-            <LinearGradient
-              colors={isCompleted ? (['#10B981', '#059669'] as const) : gradient}
-              start={{ x: 0, y: 0 }}
-              end={{ x: 1, y: 1 }}
-              style={styles.itemGradient}
-            >
-              <View style={styles.itemContent}>
-                <View style={styles.iconContainer}>
-                  <Text style={styles.itemIcon}>{icon}</Text>
-                  {isCompleted && (
-                    <View style={styles.checkBadge}>
-                      <Text style={styles.checkBadgeText}>✓</Text>
-                    </View>
-                  )}
-                </View>
-                <View style={styles.textContainer}>
-                  <Text style={[styles.itemTitle, isCompleted && styles.itemTitleCompleted]}>
-                    {item}
-                  </Text>
-                  <Text style={styles.itemDescription}>{info.description}</Text>
-                </View>
+            <View style={styles.itemContent}>
+              <Text style={styles.checkbox}>{isCompleted ? '[✓]' : '[ ]'}</Text>
+              <View style={styles.textContainer}>
+                <Text style={[styles.itemTitle, isCompleted && styles.itemTitleCompleted]}>
+                  {icon} {item.toUpperCase().replace(/ /g, '_')}
+                </Text>
+                <Text style={styles.itemDescription}>{'>'} {info.description}</Text>
               </View>
-            </LinearGradient>
+            </View>
           </TouchableOpacity>
         );
       })}
 
-      <LinearGradient
-        colors={
-          routineManager.isRoutineComplete() ? (['#10B981', '#059669'] as const) : Gradients.primary
-        }
-        start={{ x: 0, y: 0 }}
-        end={{ x: 1, y: 1 }}
-        style={styles.progressContainer}
-      >
+      <View style={styles.progressContainer}>
         <View style={styles.progressContent}>
-          <Text style={styles.progressLabel}>Progress</Text>
-          <Text style={styles.progressCount}>
-            {routineManager.getCompletedCount()} / {routineManager.getTotalCount()}
+          <Text style={styles.progressLabel}>
+            $ PROGRESS: {routineManager.getCompletedCount()}/{routineManager.getTotalCount()} TASKS_COMPLETE
           </Text>
           <View style={styles.progressBarContainer}>
             <View
@@ -188,10 +151,10 @@ export default function RoutineChecklist({
             />
           </View>
           {routineManager.isRoutineComplete() && (
-            <Text style={styles.completeText}>🎉 Amazing! All Done!</Text>
+            <Text style={styles.completeText}>{'>'} STATUS: ALL_SYSTEMS_OPERATIONAL</Text>
           )}
         </View>
-      </LinearGradient>
+      </View>
 
       <PushupTrackingScreen
         visible={showPushupTracker}
@@ -219,114 +182,85 @@ const styles = StyleSheet.create({
   },
   item: {
     marginBottom: Spacing.md,
-    borderRadius: BorderRadius.lg,
-    overflow: 'hidden',
-    ...Shadows.md,
+    borderWidth: 1,
+    borderColor: Colors.terminal.gray,
+    borderRadius: BorderRadius.sm,
+    backgroundColor: Colors.terminal.darkGray,
+    padding: Spacing.md,
+    ...Shadows.sm,
   },
   itemCompleted: {
-    opacity: 0.9,
-  },
-  itemGradient: {
-    padding: Spacing.lg,
-    borderRadius: BorderRadius.lg,
+    borderColor: Colors.terminal.green,
+    backgroundColor: 'rgba(0, 215, 135, 0.05)',
   },
   itemContent: {
     flexDirection: 'row',
-    alignItems: 'center',
+    alignItems: 'flex-start',
   },
-  iconContainer: {
-    width: 60,
-    height: 60,
-    borderRadius: BorderRadius.full,
-    backgroundColor: 'rgba(255, 255, 255, 0.25)',
-    justifyContent: 'center',
-    alignItems: 'center',
+  checkbox: {
+    fontSize: FontSizes.lg,
+    color: Colors.terminal.green,
+    fontFamily: FontFamilies.mono,
     marginRight: Spacing.md,
-    position: 'relative',
-  },
-  itemIcon: {
-    fontSize: 32,
-  },
-  checkBadge: {
-    position: 'absolute',
-    top: -4,
-    right: -4,
-    width: 24,
-    height: 24,
-    borderRadius: BorderRadius.full,
-    backgroundColor: Colors.neutral.white,
-    justifyContent: 'center',
-    alignItems: 'center',
-    ...Shadows.sm,
-  },
-  checkBadgeText: {
-    fontSize: 14,
-    color: Colors.accent.green,
-    fontWeight: FontWeights.bold,
+    marginTop: 2,
   },
   textContainer: {
     flex: 1,
   },
   itemTitle: {
-    fontSize: FontSizes.lg,
+    fontSize: FontSizes.base,
     fontWeight: FontWeights.bold,
-    color: Colors.neutral.white,
+    color: Colors.terminal.green,
+    fontFamily: FontFamilies.mono,
     marginBottom: Spacing.xs,
   },
   itemTitleCompleted: {
-    opacity: 0.9,
+    color: Colors.terminal.brightGreen,
   },
   itemDescription: {
     fontSize: FontSizes.sm,
-    color: Colors.neutral.white,
-    opacity: 0.85,
-    lineHeight: 20,
+    color: Colors.terminal.cyan,
+    fontFamily: FontFamilies.mono,
+    lineHeight: 18,
   },
   progressContainer: {
     marginTop: Spacing.lg,
-    borderRadius: BorderRadius.lg,
-    overflow: 'hidden',
-    ...Shadows.lg,
+    borderWidth: 2,
+    borderColor: Colors.terminal.green,
+    borderRadius: BorderRadius.sm,
+    backgroundColor: Colors.terminal.darkGray,
   },
   progressContent: {
-    padding: Spacing.lg,
+    padding: Spacing.md,
   },
   progressLabel: {
     fontSize: FontSizes.sm,
-    fontWeight: FontWeights.semibold,
-    color: Colors.neutral.white,
-    opacity: 0.9,
-    marginBottom: Spacing.xs,
-    textTransform: 'uppercase',
-    letterSpacing: 1,
-  },
-  progressCount: {
-    fontSize: FontSizes.xxxl,
-    fontWeight: FontWeights.extrabold,
-    color: Colors.neutral.white,
+    fontWeight: FontWeights.normal,
+    color: Colors.terminal.amber,
+    fontFamily: FontFamilies.mono,
     marginBottom: Spacing.md,
   },
   progressBarContainer: {
-    height: 8,
-    backgroundColor: 'rgba(255, 255, 255, 0.25)',
-    borderRadius: BorderRadius.full,
+    height: 4,
+    backgroundColor: Colors.terminal.gray,
+    borderRadius: 0,
     overflow: 'hidden',
     marginBottom: Spacing.md,
   },
   progressBar: {
     height: '100%',
-    backgroundColor: Colors.neutral.white,
-    borderRadius: BorderRadius.full,
+    backgroundColor: Colors.terminal.green,
   },
   completeText: {
-    fontSize: FontSizes.lg,
-    fontWeight: FontWeights.bold,
-    color: Colors.neutral.white,
-    textAlign: 'center',
+    fontSize: FontSizes.sm,
+    fontWeight: FontWeights.normal,
+    color: Colors.terminal.brightGreen,
+    fontFamily: FontFamilies.mono,
     marginTop: Spacing.sm,
   },
   loadingText: {
     fontSize: FontSizes.base,
+    fontFamily: FontFamilies.mono,
     color: Colors.neutral.gray500,
     textAlign: 'center',
     marginTop: Spacing.lg,

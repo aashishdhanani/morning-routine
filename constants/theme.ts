@@ -1,58 +1,64 @@
-// Design system constants for consistent theming
+// Terminal/Tech-themed design system
 
 export const Colors = {
-  // Primary gradient colors
-  primary: {
-    start: '#6366F1', // Indigo
-    middle: '#8B5CF6', // Purple
-    end: '#EC4899', // Pink
+  // Terminal colors
+  terminal: {
+    black: '#0A0E14',      // Deep terminal black
+    darkGray: '#1A1F29',   // Terminal background
+    gray: '#2B3240',       // Lighter terminal gray
+    green: '#00D787',      // Matrix green
+    brightGreen: '#00FF9F', // Bright terminal green
+    cyan: '#00D7FF',       // Terminal cyan
+    amber: '#FFB454',      // Terminal amber/yellow
+    red: '#FF6B6B',        // Terminal red
+    blue: '#57C7FF',       // Terminal blue
   },
-  // Accent colors
+  // Accent colors (terminal themed)
   accent: {
-    green: '#10B981',
-    blue: '#3B82F6',
-    purple: '#A855F7',
-    pink: '#EC4899',
-    orange: '#F59E0B',
-    red: '#EF4444',
+    green: '#00D787',
+    blue: '#57C7FF',
+    purple: '#C792EA',
+    pink: '#FF6AC1',
+    orange: '#FFB454',
+    red: '#FF6B6B',
   },
-  // Neutral colors
+  // Neutral colors (terminal themed)
   neutral: {
-    white: '#FFFFFF',
-    gray50: '#F9FAFB',
-    gray100: '#F3F4F6',
-    gray200: '#E5E7EB',
-    gray300: '#D1D5DB',
-    gray400: '#9CA3AF',
-    gray500: '#6B7280',
-    gray600: '#4B5563',
-    gray700: '#374151',
-    gray800: '#1F2937',
-    gray900: '#111827',
+    white: '#E6EDF3',      // Slightly off-white for terminals
+    gray50: '#2B3240',
+    gray100: '#343D4D',
+    gray200: '#3E4859',
+    gray300: '#4F5B70',
+    gray400: '#6B7280',
+    gray500: '#8B92A0',
+    gray600: '#A8AEBB',
+    gray700: '#C5CAD3',
+    gray800: '#1A1F29',
+    gray900: '#0A0E14',
     black: '#000000',
   },
-  // Status colors
+  // Status colors (terminal themed)
   status: {
-    success: '#10B981',
-    warning: '#F59E0B',
-    error: '#EF4444',
-    info: '#3B82F6',
+    success: '#00D787',
+    warning: '#FFB454',
+    error: '#FF6B6B',
+    info: '#57C7FF',
   },
   // Background
   background: {
-    primary: '#FFFFFF',
-    secondary: '#F9FAFB',
-    dark: '#111827',
+    primary: '#0A0E14',     // Deep black
+    secondary: '#1A1F29',   // Dark gray
+    dark: '#000000',
   },
 };
 
 export const Gradients = {
-  primary: ['#6366F1', '#8B5CF6', '#EC4899'] as const,
-  success: ['#10B981', '#059669'] as const,
-  blue: ['#3B82F6', '#2563EB'] as const,
-  purple: ['#A855F7', '#9333EA'] as const,
-  sunset: ['#F59E0B', '#EF4444', '#EC4899'] as const,
-  ocean: ['#06B6D4', '#3B82F6', '#8B5CF6'] as const,
+  primary: ['#0A0E14', '#1A1F29', '#2B3240'] as const,  // Dark terminal gradients
+  success: ['#00D787', '#00A86B'] as const,
+  blue: ['#57C7FF', '#3B9FD8'] as const,
+  purple: ['#C792EA', '#A370D8'] as const,
+  sunset: ['#FFB454', '#FF8C42'] as const,
+  ocean: ['#00D7FF', '#57C7FF', '#8B92FF'] as const,
 };
 
 export const Spacing = {
@@ -91,32 +97,39 @@ export const FontWeights = {
   extrabold: '800' as const,
 };
 
+export const FontFamilies = {
+  // Terminal-style monospace fonts
+  mono: 'Menlo' as const,           // iOS default monospace
+  monoAndroid: 'monospace' as const, // Android monospace
+};
+
 export const Shadows = {
+  // Terminal-style glows instead of shadows
   sm: {
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.05,
-    shadowRadius: 2,
+    shadowColor: '#00D787',
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
     elevation: 2,
   },
   md: {
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
+    shadowColor: '#00D787',
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 0.15,
+    shadowRadius: 8,
     elevation: 4,
   },
   lg: {
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 4 },
-    shadowOpacity: 0.15,
-    shadowRadius: 8,
+    shadowColor: '#00D787',
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 0.2,
+    shadowRadius: 12,
     elevation: 8,
   },
   xl: {
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 8 },
-    shadowOpacity: 0.2,
+    shadowColor: '#00D787',
+    shadowOffset: { width: 0, height: 0 },
+    shadowOpacity: 0.25,
     shadowRadius: 16,
     elevation: 16,
   },
