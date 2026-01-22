@@ -3,8 +3,10 @@ import { View, Text, StyleSheet, TouchableOpacity, Alert } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { RoutineManager } from '../services/RoutineManager';
 import { RoutineItem, ROUTINE_ITEM_INFO } from '../types/RoutineItem';
+import { HistoryManager } from '../services/HistoryManager';
 import PushupTrackingScreen from './PushupTrackingScreen';
 import PhotoCaptureScreen from './PhotoCaptureScreen';
+import HistoryCard from './HistoryCard';
 import { CalendarEmailService } from '../services/CalendarEmailService';
 import { MusicService } from '../services/MusicService';
 import {
@@ -19,9 +21,13 @@ import {
 
 interface RoutineChecklistProps {
   routineManager: RoutineManager;
+  historyManager?: HistoryManager;
 }
 
-export default function RoutineChecklist({ routineManager }: RoutineChecklistProps) {
+export default function RoutineChecklist({
+  routineManager,
+  historyManager,
+}: RoutineChecklistProps) {
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [refreshKey, setRefreshKey] = useState(0);
   const [isLoading, setIsLoading] = useState(true);
@@ -181,6 +187,9 @@ export default function RoutineChecklist({ routineManager }: RoutineChecklistPro
 
   return (
     <View style={styles.container}>
+      {/* History Card with Streak */}
+      {historyManager && <HistoryCard historyManager={historyManager} />}
+
       {items.map((item, index) => {
         const isCompleted = routineManager.isCompleted(item);
         const info = ROUTINE_ITEM_INFO[item];
