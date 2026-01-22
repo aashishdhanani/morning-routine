@@ -106,12 +106,12 @@ export default function HomeScreen() {
         <View style={styles.terminalBorder}>
           <View style={styles.headerTop}>
             <View style={styles.headerTextContainer}>
-              <Text style={styles.greeting}>{'>'} {greeting}</Text>
-              <Text style={styles.title}>$ MORNING_ROUTINE</Text>
-              <Text style={styles.subtitle}>{'>'} RUN DAILY_TASKS.SH</Text>
+              <Text style={styles.greeting}>{greeting}</Text>
+              <Text style={styles.title}>Morning Routine</Text>
+              <Text style={styles.subtitle}>Complete your daily tasks</Text>
             </View>
             <TouchableOpacity style={styles.settingsButton} onPress={() => setShowSettings(true)}>
-              <Text style={styles.settingsIcon}>[⚙]</Text>
+              <Text style={styles.settingsIcon}>⚙</Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -161,9 +161,8 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.background.primary,
   },
   terminalBorder: {
-    borderWidth: 2,
-    borderColor: Colors.terminal.green,
-    borderRadius: BorderRadius.sm,
+    borderBottomWidth: 1,
+    borderBottomColor: Colors.terminal.gray,
     padding: Spacing.md,
     backgroundColor: Colors.terminal.darkGray,
   },
@@ -196,20 +195,14 @@ const styles = StyleSheet.create({
     fontFamily: FontFamilies.mono,
   },
   settingsButton: {
-    paddingHorizontal: Spacing.sm,
-    paddingVertical: Spacing.xs,
-    borderWidth: 1,
-    borderColor: Colors.terminal.green,
-    borderRadius: BorderRadius.sm,
-    backgroundColor: 'rgba(0, 215, 135, 0.1)',
+    padding: Spacing.sm,
     justifyContent: 'center',
     alignItems: 'center',
     marginLeft: Spacing.md,
   },
   settingsIcon: {
-    fontSize: 16,
+    fontSize: 24,
     color: Colors.terminal.green,
-    fontFamily: FontFamilies.mono,
   },
   scrollView: {
     flex: 1,

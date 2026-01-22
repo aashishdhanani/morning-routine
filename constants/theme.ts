@@ -1,64 +1,64 @@
-// Terminal/Tech-themed design system
+// Monochromatic design system - Clean, high contrast black & white
 
 export const Colors = {
-  // Terminal colors
+  // Main color palette (monochrome)
   terminal: {
-    black: '#0A0E14',      // Deep terminal black
-    darkGray: '#1A1F29',   // Terminal background
-    gray: '#2B3240',       // Lighter terminal gray
-    green: '#00D787',      // Matrix green
-    brightGreen: '#00FF9F', // Bright terminal green
-    cyan: '#00D7FF',       // Terminal cyan
-    amber: '#FFB454',      // Terminal amber/yellow
-    red: '#FF6B6B',        // Terminal red
-    blue: '#57C7FF',       // Terminal blue
+    black: '#0A0A0A',      // Deep black background
+    darkGray: '#1A1A1A',   // Card background
+    gray: '#404040',       // Borders and dividers
+    green: '#FFFFFF',      // Primary text (white)
+    brightGreen: '#FFFFFF', // Completed states (white)
+    cyan: '#B0B0B0',       // Secondary text
+    amber: '#B0B0B0',      // Tertiary text
+    red: '#E0E0E0',        // Danger/warning (light gray)
+    blue: '#B0B0B0',       // Info text
   },
-  // Accent colors (terminal themed)
+  // Accent colors (monochrome)
   accent: {
-    green: '#00D787',
-    blue: '#57C7FF',
-    purple: '#C792EA',
-    pink: '#FF6AC1',
-    orange: '#FFB454',
-    red: '#FF6B6B',
+    green: '#FFFFFF',
+    blue: '#B0B0B0',
+    purple: '#808080',
+    pink: '#B0B0B0',
+    orange: '#B0B0B0',
+    red: '#E0E0E0',
   },
-  // Neutral colors (terminal themed)
+  // Neutral colors
   neutral: {
-    white: '#E6EDF3',      // Slightly off-white for terminals
-    gray50: '#2B3240',
-    gray100: '#343D4D',
-    gray200: '#3E4859',
-    gray300: '#4F5B70',
-    gray400: '#6B7280',
-    gray500: '#8B92A0',
-    gray600: '#A8AEBB',
-    gray700: '#C5CAD3',
-    gray800: '#1A1F29',
-    gray900: '#0A0E14',
+    white: '#FFFFFF',
+    gray50: '#F5F5F5',
+    gray100: '#E0E0E0',
+    gray200: '#C0C0C0',
+    gray300: '#B0B0B0',
+    gray400: '#808080',
+    gray500: '#606060',
+    gray600: '#404040',
+    gray700: '#2A2A2A',
+    gray800: '#1A1A1A',
+    gray900: '#0A0A0A',
     black: '#000000',
   },
-  // Status colors (terminal themed)
+  // Status colors (monochrome)
   status: {
-    success: '#00D787',
-    warning: '#FFB454',
-    error: '#FF6B6B',
-    info: '#57C7FF',
+    success: '#FFFFFF',
+    warning: '#B0B0B0',
+    error: '#E0E0E0',
+    info: '#B0B0B0',
   },
   // Background
   background: {
-    primary: '#0A0E14',     // Deep black
-    secondary: '#1A1F29',   // Dark gray
+    primary: '#0A0A0A',     // Deep black
+    secondary: '#1A1A1A',   // Card background
     dark: '#000000',
   },
 };
 
 export const Gradients = {
-  primary: ['#0A0E14', '#1A1F29', '#2B3240'] as const,  // Dark terminal gradients
-  success: ['#00D787', '#00A86B'] as const,
-  blue: ['#57C7FF', '#3B9FD8'] as const,
-  purple: ['#C792EA', '#A370D8'] as const,
-  sunset: ['#FFB454', '#FF8C42'] as const,
-  ocean: ['#00D7FF', '#57C7FF', '#8B92FF'] as const,
+  primary: ['#0A0A0A', '#1A1A1A', '#242424'] as const,  // Black to dark gray
+  success: ['#FFFFFF', '#E0E0E0'] as const,
+  blue: ['#B0B0B0', '#808080'] as const,
+  purple: ['#808080', '#606060'] as const,
+  sunset: ['#B0B0B0', '#808080'] as const,
+  ocean: ['#B0B0B0', '#808080', '#606060'] as const,
 };
 
 export const Spacing = {
@@ -104,33 +104,33 @@ export const FontFamilies = {
 };
 
 export const Shadows = {
-  // Terminal-style glows instead of shadows
+  // Subtle black shadows for depth
   sm: {
-    shadowColor: '#00D787',
-    shadowOffset: { width: 0, height: 0 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
+    shadowColor: '#000000',
+    shadowOffset: { width: 0, height: 1 },
+    shadowOpacity: 0.2,
+    shadowRadius: 2,
     elevation: 2,
   },
   md: {
-    shadowColor: '#00D787',
-    shadowOffset: { width: 0, height: 0 },
-    shadowOpacity: 0.15,
-    shadowRadius: 8,
+    shadowColor: '#000000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.25,
+    shadowRadius: 4,
     elevation: 4,
   },
   lg: {
-    shadowColor: '#00D787',
-    shadowOffset: { width: 0, height: 0 },
-    shadowOpacity: 0.2,
-    shadowRadius: 12,
+    shadowColor: '#000000',
+    shadowOffset: { width: 0, height: 4 },
+    shadowOpacity: 0.3,
+    shadowRadius: 8,
     elevation: 8,
   },
   xl: {
-    shadowColor: '#00D787',
-    shadowOffset: { width: 0, height: 0 },
-    shadowOpacity: 0.25,
-    shadowRadius: 16,
+    shadowColor: '#000000',
+    shadowOffset: { width: 0, height: 6 },
+    shadowOpacity: 0.35,
+    shadowRadius: 12,
     elevation: 16,
   },
 };

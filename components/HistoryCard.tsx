@@ -78,10 +78,10 @@ export default function HistoryCard({ historyManager }: HistoryCardProps) {
         {/* Collapsed View: Streak Badge */}
         <View style={styles.header}>
           <Text style={styles.streakInfo}>
-            [🔥 STREAK: {statistics.currentStreak} DAYS]
+            🔥 {statistics.currentStreak} day streak
           </Text>
           <Text style={styles.expandHint}>
-            {expanded ? '[-]' : '[+]'}
+            {expanded ? '−' : '+'}
           </Text>
         </View>
 
@@ -90,29 +90,29 @@ export default function HistoryCard({ historyManager }: HistoryCardProps) {
           <View style={styles.expandedContent}>
             {/* Calendar */}
             <View style={styles.section}>
-              <Text style={styles.sectionTitle}>$ LAST_30_DAYS:</Text>
+              <Text style={styles.sectionTitle}>Last 30 Days</Text>
               {renderCalendarGrid()}
               <View style={styles.calendarLegend}>
-                <Text style={styles.legendText}>[■] COMPLETE  [ ] INCOMPLETE</Text>
+                <Text style={styles.legendText}>■ Complete  □ Incomplete</Text>
               </View>
             </View>
 
             {/* Statistics Grid */}
             <View style={styles.statsGrid}>
               <View style={styles.statBox}>
-                <Text style={styles.statLabel}>LONGEST_STREAK:</Text>
+                <Text style={styles.statLabel}>Longest Streak</Text>
                 <Text style={styles.statValue}>{statistics.longestStreak}</Text>
               </View>
               <View style={styles.statBox}>
-                <Text style={styles.statLabel}>TOTAL_RUNS:</Text>
+                <Text style={styles.statLabel}>Total Completions</Text>
                 <Text style={styles.statValue}>{statistics.totalCompletions}</Text>
               </View>
               <View style={styles.statBox}>
-                <Text style={styles.statLabel}>SUCCESS_RATE:</Text>
+                <Text style={styles.statLabel}>Success Rate</Text>
                 <Text style={styles.statValue}>{statistics.completionRate}%</Text>
               </View>
               <View style={styles.statBox}>
-                <Text style={styles.statLabel}>AVG_TIME:</Text>
+                <Text style={styles.statLabel}>Average Time</Text>
                 <Text style={styles.statValue}>{statistics.averageTime}</Text>
               </View>
             </View>
@@ -129,11 +129,11 @@ const styles = StyleSheet.create({
   },
   card: {
     borderWidth: 1,
-    borderColor: Colors.terminal.green,
+    borderColor: Colors.terminal.gray,
     borderRadius: BorderRadius.sm,
     backgroundColor: Colors.terminal.darkGray,
     padding: Spacing.md,
-    ...Shadows.md,
+    ...Shadows.sm,
   },
   header: {
     flexDirection: 'row',
@@ -142,15 +142,14 @@ const styles = StyleSheet.create({
   },
   streakInfo: {
     fontSize: FontSizes.base,
-    fontWeight: FontWeights.bold,
-    color: Colors.terminal.amber,
-    fontFamily: FontFamilies.mono,
+    fontWeight: FontWeights.semibold,
+    color: Colors.terminal.green,
     flex: 1,
   },
   expandHint: {
-    fontSize: FontSizes.base,
-    color: Colors.terminal.green,
-    fontFamily: FontFamilies.mono,
+    fontSize: 20,
+    color: Colors.terminal.cyan,
+    fontWeight: FontWeights.bold,
   },
   expandedContent: {
     marginTop: Spacing.md,
@@ -163,9 +162,8 @@ const styles = StyleSheet.create({
   },
   sectionTitle: {
     fontSize: FontSizes.sm,
-    fontWeight: FontWeights.normal,
+    fontWeight: FontWeights.semibold,
     color: Colors.terminal.cyan,
-    fontFamily: FontFamilies.mono,
     marginBottom: Spacing.sm,
   },
   calendarGrid: {
@@ -189,7 +187,7 @@ const styles = StyleSheet.create({
   },
   calendarDayToday: {
     borderWidth: 2,
-    borderColor: Colors.terminal.amber,
+    borderColor: Colors.terminal.cyan,
   },
   calendarDayDot: {
     width: 6,
@@ -202,7 +200,6 @@ const styles = StyleSheet.create({
   legendText: {
     fontSize: FontSizes.xs,
     color: Colors.terminal.cyan,
-    fontFamily: FontFamilies.mono,
   },
   statsGrid: {
     flexDirection: 'row',
@@ -216,18 +213,17 @@ const styles = StyleSheet.create({
     borderColor: Colors.terminal.gray,
     backgroundColor: Colors.terminal.black,
     padding: Spacing.sm,
+    borderRadius: BorderRadius.sm,
   },
   statLabel: {
     fontSize: FontSizes.xs,
-    fontWeight: FontWeights.normal,
+    fontWeight: FontWeights.medium,
     color: Colors.terminal.cyan,
-    fontFamily: FontFamilies.mono,
     marginBottom: Spacing.xs,
   },
   statValue: {
     fontSize: FontSizes.xl,
     fontWeight: FontWeights.bold,
     color: Colors.terminal.green,
-    fontFamily: FontFamilies.mono,
   },
 });

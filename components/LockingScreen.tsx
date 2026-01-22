@@ -159,12 +159,12 @@ export default function LockingScreen({
         <View style={styles.header}>
           <View style={styles.headerBorder}>
             <Text style={styles.headerTitle}>
-              {isRoutineComplete ? '$ SYSTEM_UNLOCKED' : '$ SYSTEM_LOCKED'}
+              {isRoutineComplete ? 'Unlocked' : 'Locked'}
             </Text>
             <Text style={styles.headerSubtitle}>
               {isRoutineComplete
-                ? '> STATUS: ALL_TASKS_COMPLETE'
-                : `> TASKS_REQUIRED: ${routineManager.getCompletedCount()}/${routineManager.getTotalCount()}`}
+                ? 'All tasks complete'
+                : `${routineManager.getCompletedCount()} of ${routineManager.getTotalCount()} tasks complete`}
             </Text>
           </View>
         </View>
@@ -188,11 +188,11 @@ export default function LockingScreen({
               onPress={handleEmergencyUnlock}
               activeOpacity={0.8}
             >
-              <Text style={styles.emergencyButtonText}>[!] EMERGENCY_OVERRIDE</Text>
+              <Text style={styles.emergencyButtonText}>Emergency Override</Text>
             </TouchableOpacity>
           ) : (
             <View style={styles.timerContainer}>
-              <Text style={styles.timerLabel}>$ OVERRIDE_AVAILABLE_IN:</Text>
+              <Text style={styles.timerLabel}>Override available in</Text>
               <Text style={styles.timerText}>{formatTimeRemaining(timeRemaining)}</Text>
             </View>
           )}
@@ -213,24 +213,22 @@ const styles = StyleSheet.create({
     paddingBottom: Spacing.lg,
   },
   headerBorder: {
-    borderWidth: 2,
-    borderColor: Colors.terminal.red,
+    borderWidth: 1,
+    borderColor: Colors.terminal.gray,
     borderRadius: BorderRadius.sm,
     padding: Spacing.md,
     backgroundColor: Colors.terminal.darkGray,
   },
   headerTitle: {
-    fontSize: FontSizes.lg,
+    fontSize: FontSizes.xl,
     fontWeight: FontWeights.bold,
-    color: Colors.terminal.red,
-    fontFamily: FontFamilies.mono,
+    color: Colors.terminal.green,
     marginBottom: Spacing.xs,
   },
   headerSubtitle: {
     fontSize: FontSizes.sm,
     fontWeight: FontWeights.normal,
-    color: Colors.terminal.amber,
-    fontFamily: FontFamilies.mono,
+    color: Colors.terminal.cyan,
   },
   scrollView: {
     flex: 1,
@@ -247,7 +245,7 @@ const styles = StyleSheet.create({
   },
   timerContainer: {
     borderWidth: 1,
-    borderColor: Colors.terminal.amber,
+    borderColor: Colors.terminal.gray,
     borderRadius: BorderRadius.sm,
     backgroundColor: Colors.terminal.darkGray,
     padding: Spacing.md,
@@ -255,31 +253,28 @@ const styles = StyleSheet.create({
   },
   timerLabel: {
     fontSize: FontSizes.sm,
-    fontWeight: FontWeights.normal,
-    color: Colors.terminal.amber,
-    fontFamily: FontFamilies.mono,
+    fontWeight: FontWeights.medium,
+    color: Colors.terminal.cyan,
     marginBottom: Spacing.sm,
   },
   timerText: {
     fontSize: FontSizes.xxxl,
     fontWeight: FontWeights.bold,
-    color: Colors.terminal.red,
-    fontFamily: FontFamilies.mono,
+    color: Colors.terminal.green,
     fontVariant: ['tabular-nums'],
   },
   emergencyButton: {
-    borderWidth: 2,
-    borderColor: Colors.terminal.red,
+    borderWidth: 1,
+    borderColor: Colors.terminal.gray,
     borderRadius: BorderRadius.sm,
-    backgroundColor: 'rgba(255, 107, 107, 0.1)',
+    backgroundColor: Colors.terminal.darkGray,
     paddingVertical: Spacing.md,
     paddingHorizontal: Spacing.lg,
     alignItems: 'center',
   },
   emergencyButtonText: {
     fontSize: FontSizes.base,
-    fontWeight: FontWeights.bold,
-    color: Colors.terminal.red,
-    fontFamily: FontFamilies.mono,
+    fontWeight: FontWeights.semibold,
+    color: Colors.terminal.green,
   },
 });

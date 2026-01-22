@@ -123,12 +123,14 @@ export default function RoutineChecklist({
             activeOpacity={0.8}
           >
             <View style={styles.itemContent}>
-              <Text style={styles.checkbox}>{isCompleted ? '[✓]' : '[ ]'}</Text>
+              <View style={styles.checkbox}>
+                {isCompleted && <Text style={styles.checkmark}>✓</Text>}
+              </View>
               <View style={styles.textContainer}>
                 <Text style={[styles.itemTitle, isCompleted && styles.itemTitleCompleted]}>
-                  {icon} {item.toUpperCase().replace(/ /g, '_')}
+                  {icon} {item}
                 </Text>
-                <Text style={styles.itemDescription}>{'>'} {info.description}</Text>
+                <Text style={styles.itemDescription}>{info.description}</Text>
               </View>
             </View>
           </TouchableOpacity>
@@ -138,7 +140,7 @@ export default function RoutineChecklist({
       <View style={styles.progressContainer}>
         <View style={styles.progressContent}>
           <Text style={styles.progressLabel}>
-            $ PROGRESS: {routineManager.getCompletedCount()}/{routineManager.getTotalCount()} TASKS_COMPLETE
+            {routineManager.getCompletedCount()} of {routineManager.getTotalCount()} tasks complete
           </Text>
           <View style={styles.progressBarContainer}>
             <View
@@ -151,7 +153,7 @@ export default function RoutineChecklist({
             />
           </View>
           {routineManager.isRoutineComplete() && (
-            <Text style={styles.completeText}>{'>'} STATUS: ALL_SYSTEMS_OPERATIONAL</Text>
+            <Text style={styles.completeText}>All tasks completed!</Text>
           )}
         </View>
       </View>
@@ -191,27 +193,35 @@ const styles = StyleSheet.create({
   },
   itemCompleted: {
     borderColor: Colors.terminal.green,
-    backgroundColor: 'rgba(0, 215, 135, 0.05)',
+    backgroundColor: Colors.terminal.darkGray,
   },
   itemContent: {
     flexDirection: 'row',
-    alignItems: 'flex-start',
+    alignItems: 'center',
   },
   checkbox: {
-    fontSize: FontSizes.lg,
-    color: Colors.terminal.green,
-    fontFamily: FontFamilies.mono,
+    width: 24,
+    height: 24,
+    borderWidth: 2,
+    borderColor: Colors.terminal.gray,
+    borderRadius: 4,
     marginRight: Spacing.md,
-    marginTop: 2,
+    justifyContent: 'center',
+    alignItems: 'center',
+    backgroundColor: Colors.terminal.black,
+  },
+  checkmark: {
+    fontSize: 16,
+    color: Colors.terminal.green,
+    fontWeight: FontWeights.bold,
   },
   textContainer: {
     flex: 1,
   },
   itemTitle: {
     fontSize: FontSizes.base,
-    fontWeight: FontWeights.bold,
+    fontWeight: FontWeights.semibold,
     color: Colors.terminal.green,
-    fontFamily: FontFamilies.mono,
     marginBottom: Spacing.xs,
   },
   itemTitleCompleted: {
@@ -220,13 +230,12 @@ const styles = StyleSheet.create({
   itemDescription: {
     fontSize: FontSizes.sm,
     color: Colors.terminal.cyan,
-    fontFamily: FontFamilies.mono,
     lineHeight: 18,
   },
   progressContainer: {
     marginTop: Spacing.lg,
-    borderWidth: 2,
-    borderColor: Colors.terminal.green,
+    borderWidth: 1,
+    borderColor: Colors.terminal.gray,
     borderRadius: BorderRadius.sm,
     backgroundColor: Colors.terminal.darkGray,
   },
@@ -236,14 +245,13 @@ const styles = StyleSheet.create({
   progressLabel: {
     fontSize: FontSizes.sm,
     fontWeight: FontWeights.normal,
-    color: Colors.terminal.amber,
-    fontFamily: FontFamilies.mono,
+    color: Colors.terminal.cyan,
     marginBottom: Spacing.md,
   },
   progressBarContainer: {
-    height: 4,
+    height: 6,
     backgroundColor: Colors.terminal.gray,
-    borderRadius: 0,
+    borderRadius: 3,
     overflow: 'hidden',
     marginBottom: Spacing.md,
   },
@@ -253,15 +261,13 @@ const styles = StyleSheet.create({
   },
   completeText: {
     fontSize: FontSizes.sm,
-    fontWeight: FontWeights.normal,
-    color: Colors.terminal.brightGreen,
-    fontFamily: FontFamilies.mono,
+    fontWeight: FontWeights.medium,
+    color: Colors.terminal.green,
     marginTop: Spacing.sm,
   },
   loadingText: {
     fontSize: FontSizes.base,
-    fontFamily: FontFamilies.mono,
-    color: Colors.neutral.gray500,
+    color: Colors.terminal.cyan,
     textAlign: 'center',
     marginTop: Spacing.lg,
   },

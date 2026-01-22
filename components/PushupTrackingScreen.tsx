@@ -107,41 +107,41 @@ export default function PushupTrackingScreen({
   const getPhaseText = (): string => {
     switch (data.phase) {
       case PushupPhase.NEUTRAL:
-        return 'READY';
+        return 'Ready';
       case PushupPhase.DESCENDING:
-        return 'DESCENDING...';
+        return 'Descending';
       case PushupPhase.BOTTOM:
-        return 'AT_BOTTOM';
+        return 'At bottom';
       case PushupPhase.ASCENDING:
-        return 'ASCENDING...';
+        return 'Ascending';
       default:
-        return 'READY';
+        return 'Ready';
     }
   };
 
   const getInstructions = (): string => {
     if (data.state === PushupState.IDLE) {
-      return '> Place phone on your back and start tracking';
+      return 'Place phone on your back and start tracking';
     }
     if (data.state === PushupState.COMPLETED) {
-      return '> TARGET_COMPLETE: 20 pushups';
+      return 'Target complete: 20 pushups';
     }
-    return '> TRACKING: Phone monitoring movement';
+    return 'Tracking your movement';
   };
 
   return (
     <Modal visible={visible} animationType="slide" onRequestClose={handleClose}>
       <View style={styles.container}>
         <View style={styles.header}>
-          <Text style={styles.title}>$ PUSHUP_TRACKER</Text>
+          <Text style={styles.title}>Pushup Tracker</Text>
           <TouchableOpacity onPress={handleClose} style={styles.closeButton}>
-            <Text style={styles.closeButtonText}>[X]</Text>
+            <Text style={styles.closeButtonText}>×</Text>
           </TouchableOpacity>
         </View>
 
         <View style={styles.content}>
           <View style={styles.countContainer}>
-            <Text style={styles.countLabel}>$ REPS_COMPLETE:</Text>
+            <Text style={styles.countLabel}>Reps Complete</Text>
             <Text style={styles.count}>
               {data.count} / {data.targetCount}
             </Text>
@@ -154,7 +154,7 @@ export default function PushupTrackingScreen({
           </View>
 
           <View style={styles.statusContainer}>
-            <Text style={styles.statusLabel}>$ STATUS:</Text>
+            <Text style={styles.statusLabel}>Status</Text>
             <Text style={styles.status}>{getPhaseText()}</Text>
           </View>
 
@@ -163,7 +163,7 @@ export default function PushupTrackingScreen({
           {!sensorsAvailable && (
             <View style={styles.warningContainer}>
               <Text style={styles.warningText}>
-                [!] REQUIRES: Physical device with motion sensors
+                Requires physical device with motion sensors
               </Text>
             </View>
           )}
@@ -176,24 +176,24 @@ export default function PushupTrackingScreen({
               onPress={handleStart}
               disabled={!sensorsAvailable}
             >
-              <Text style={styles.buttonText}>START_TRACKING</Text>
+              <Text style={styles.buttonText}>Start Tracking</Text>
             </TouchableOpacity>
           )}
 
           {data.state === PushupState.TRACKING && (
             <>
               <TouchableOpacity style={[styles.button, styles.stopButton]} onPress={handleStop}>
-                <Text style={styles.buttonText}>STOP</Text>
+                <Text style={styles.buttonText}>Stop</Text>
               </TouchableOpacity>
               <TouchableOpacity style={[styles.button, styles.resetButton]} onPress={handleReset}>
-                <Text style={styles.buttonText}>RESET</Text>
+                <Text style={styles.buttonText}>Reset</Text>
               </TouchableOpacity>
             </>
           )}
 
           {data.state === PushupState.COMPLETED && (
             <TouchableOpacity style={[styles.button, styles.completeButton]} onPress={handleClose}>
-              <Text style={styles.buttonText}>DONE</Text>
+              <Text style={styles.buttonText}>Done</Text>
             </TouchableOpacity>
           )}
         </View>
@@ -216,26 +216,20 @@ const styles = StyleSheet.create({
     paddingBottom: Spacing.lg,
     backgroundColor: Colors.terminal.darkGray,
     borderBottomWidth: 1,
-    borderBottomColor: Colors.terminal.green,
+    borderBottomColor: Colors.terminal.gray,
   },
   title: {
     fontSize: FontSizes.xl,
     fontWeight: FontWeights.bold,
     color: Colors.terminal.green,
-    fontFamily: FontFamilies.mono,
   },
   closeButton: {
-    paddingHorizontal: Spacing.sm,
-    paddingVertical: Spacing.xs,
-    borderWidth: 1,
-    borderColor: Colors.terminal.red,
-    borderRadius: BorderRadius.sm,
+    padding: Spacing.sm,
   },
   closeButtonText: {
-    fontSize: FontSizes.sm,
-    color: Colors.terminal.red,
-    fontFamily: FontFamilies.mono,
-    fontWeight: FontWeights.bold,
+    fontSize: 28,
+    color: Colors.terminal.cyan,
+    fontWeight: FontWeights.normal,
   },
   content: {
     flex: 1,
@@ -246,8 +240,8 @@ const styles = StyleSheet.create({
   countContainer: {
     alignItems: 'center',
     marginBottom: Spacing.xl,
-    borderWidth: 2,
-    borderColor: Colors.terminal.green,
+    borderWidth: 1,
+    borderColor: Colors.terminal.gray,
     backgroundColor: Colors.terminal.darkGray,
     padding: Spacing.lg,
     borderRadius: BorderRadius.sm,
@@ -257,13 +251,12 @@ const styles = StyleSheet.create({
     fontSize: FontSizes.base,
     color: Colors.terminal.cyan,
     marginBottom: Spacing.md,
-    fontFamily: FontFamilies.mono,
+    fontWeight: FontWeights.medium,
   },
   count: {
     fontSize: 64,
     fontWeight: FontWeights.bold,
     color: Colors.terminal.green,
-    fontFamily: FontFamilies.mono,
     fontVariant: ['tabular-nums'],
   },
   progressBarContainer: {
@@ -290,15 +283,14 @@ const styles = StyleSheet.create({
   },
   statusLabel: {
     fontSize: FontSizes.sm,
-    color: Colors.terminal.amber,
+    color: Colors.terminal.cyan,
     marginBottom: Spacing.sm,
-    fontFamily: FontFamilies.mono,
+    fontWeight: FontWeights.medium,
   },
   status: {
     fontSize: FontSizes.lg,
-    fontWeight: FontWeights.bold,
+    fontWeight: FontWeights.semibold,
     color: Colors.terminal.green,
-    fontFamily: FontFamilies.mono,
   },
   instructions: {
     fontSize: FontSizes.sm,
@@ -306,7 +298,6 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     lineHeight: 20,
     paddingHorizontal: Spacing.lg,
-    fontFamily: FontFamilies.mono,
   },
   warningContainer: {
     marginTop: Spacing.lg,
@@ -314,13 +305,12 @@ const styles = StyleSheet.create({
     backgroundColor: Colors.terminal.darkGray,
     borderRadius: BorderRadius.sm,
     borderWidth: 1,
-    borderColor: Colors.terminal.amber,
+    borderColor: Colors.terminal.gray,
   },
   warningText: {
     fontSize: FontSizes.sm,
-    color: Colors.terminal.amber,
+    color: Colors.terminal.cyan,
     textAlign: 'center',
-    fontFamily: FontFamilies.mono,
   },
   controls: {
     padding: Spacing.lg,
@@ -330,28 +320,27 @@ const styles = StyleSheet.create({
     padding: Spacing.md,
     borderRadius: BorderRadius.sm,
     alignItems: 'center',
-    borderWidth: 2,
+    borderWidth: 1,
   },
   startButton: {
-    backgroundColor: 'rgba(0, 215, 135, 0.1)',
+    backgroundColor: Colors.terminal.darkGray,
     borderColor: Colors.terminal.green,
   },
   stopButton: {
-    backgroundColor: 'rgba(255, 107, 107, 0.1)',
-    borderColor: Colors.terminal.red,
+    backgroundColor: Colors.terminal.darkGray,
+    borderColor: Colors.terminal.gray,
   },
   resetButton: {
-    backgroundColor: 'rgba(255, 180, 84, 0.1)',
-    borderColor: Colors.terminal.amber,
+    backgroundColor: Colors.terminal.darkGray,
+    borderColor: Colors.terminal.gray,
   },
   completeButton: {
-    backgroundColor: 'rgba(0, 215, 135, 0.1)',
+    backgroundColor: Colors.terminal.darkGray,
     borderColor: Colors.terminal.green,
   },
   buttonText: {
     color: Colors.terminal.green,
     fontSize: FontSizes.base,
-    fontWeight: FontWeights.bold,
-    fontFamily: FontFamilies.mono,
+    fontWeight: FontWeights.semibold,
   },
 });
