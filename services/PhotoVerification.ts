@@ -11,24 +11,41 @@ export interface PhotoRecord {
 const STORAGE_KEY = 'photoVerificationRecords';
 
 export class PhotoVerification {
-  private photosDirectory: string;
+  private photosDirectory: string | null = null;
 
   constructor() {
-    try {
-      this.photosDirectory = FileSystem.documentDirectory
-        ? `${FileSystem.documentDirectory}routine-photos/`
-        : '';
-    } catch (error) {
-      console.warn('FileSystem not available:', error);
-      this.photosDirectory = '';
+    // Delay FileSystem access until first use
+  }
+
+  /**
+   * Get photos directory, initializing if needed
+   */
+  private getPhotosDirectory(): string {
+    if (this.photosDirectory === null) {
+      try {
+        if (FileSystem.documentDirectory) {
+          this.photosDirectory = `${FileSystem.documentDirectory}routine-photos/`;
+        } else {
+          this.photosDirectory = '';
+        }
+      } catch (error) {
+        console.warn('FileSystem not available:', error);
+        this.photosDirectory = '';
+      }
     }
+    return this.photosDirectory;
   }
 
   /**
    * Check if FileSystem is available
    */
   isAvailable(): boolean {
-    return this.photosDirectory !== '' && FileSystem.documentDirectory !== undefined;
+    try {
+      const dir = this.getPhotosDirectory();
+      return dir !== '' && FileSystem.documentDirectory !== undefined;
+    } catch (error) {
+      return false;
+    }
   }
 
   /**
@@ -38,9 +55,10 @@ export class PhotoVerification {
     if (!this.isAvailable()) {
       throw new Error('FileSystem not available - photo features are disabled');
     }
-    const dirInfo = await FileSystem.getInfoAsync(this.photosDirectory);
+    const photosDir = this.getPhotosDirectory();
+    const dirInfo = await FileSystem.getInfoAsync(photosDir);
     if (!dirInfo.exists) {
-      await FileSystem.makeDirectoryAsync(this.photosDirectory, { intermediates: true });
+      await FileSystem.makeDirectoryAsync(photosDir, { intermediates: true });
     }
   }
 
@@ -96,7 +114,7 @@ export class PhotoVerification {
       // Save the photo to our directory
       const timestamp = Date.now();
       const filename = `${routineItem.replace(/\s+/g, '_')}_${timestamp}.jpg`;
-      const destinationUri = `${this.photosDirectory}${filename}`;
+      const destinationUri = `${this.getPhotosDirectory()}${filename}`;
 
       // Copy the file
       await FileSystem.copyAsync({
@@ -145,7 +163,7 @@ export class PhotoVerification {
       // Save the photo to our directory
       const timestamp = Date.now();
       const filename = `${routineItem.replace(/\s+/g, '_')}_${timestamp}.jpg`;
-      const destinationUri = `${this.photosDirectory}${filename}`;
+      const destinationUri = `${this.getPhotosDirectory()}${filename}`;
 
       // Copy the file
       await FileSystem.copyAsync({
