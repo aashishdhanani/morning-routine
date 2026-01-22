@@ -1,6 +1,19 @@
 import * as ImagePicker from 'expo-image-picker';
-import * as FileSystem from 'expo-file-system';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+
+// Lazy load FileSystem to avoid module initialization errors
+let FileSystem: any = null;
+async function getFileSystem() {
+  if (FileSystem === null) {
+    try {
+      FileSystem = await import('expo-file-system');
+    } catch (error) {
+      console.warn('Failed to load expo-file-system:', error);
+      FileSystem = false; // Mark as failed
+    }
+  }
+  return FileSystem === false ? null : FileSystem;
+}
 
 export interface PhotoRecord {
   uri: string;
@@ -20,11 +33,12 @@ export class PhotoVerification {
   /**
    * Get photos directory, initializing if needed
    */
-  private getPhotosDirectory(): string {
+  private async getPhotosDirectory(): Promise<string> {
     if (this.photosDirectory === null) {
       try {
-        if (FileSystem.documentDirectory) {
-          this.photosDirectory = `${FileSystem.documentDirectory}routine-photos/`;
+        const FS = await getFileSystem();
+        if (FS && FS.documentDirectory) {
+          this.photosDirectory = `${FS.documentDirectory}routine-photos/`;
         } else {
           this.photosDirectory = '';
         }
@@ -39,10 +53,11 @@ export class PhotoVerification {
   /**
    * Check if FileSystem is available
    */
-  isAvailable(): boolean {
+  async isAvailable(): Promise<boolean> {
     try {
-      const dir = this.getPhotosDirectory();
-      return dir !== '' && FileSystem.documentDirectory !== undefined;
+      const dir = await this.getPhotosDirectory();
+      const FS = await getFileSystem();
+      return dir !== '' && FS !== null && FS.documentDirectory !== undefined;
     } catch (error) {
       return false;
     }
@@ -52,13 +67,16 @@ export class PhotoVerification {
    * Initialize the photos directory
    */
   async initialize(): Promise<void> {
-    if (!this.isAvailable()) {
+    if (!(await this.isAvailable())) {
       throw new Error('FileSystem not available - photo features are disabled');
     }
-    const photosDir = this.getPhotosDirectory();
-    const dirInfo = await FileSystem.getInfoAsync(photosDir);
+    const FS = await getFileSystem();
+    if (!FS) throw new Error('FileSystem not available');
+
+    const photosDir = await this.getPhotosDirectory();
+    const dirInfo = await FS.getInfoAsync(photosDir);
     if (!dirInfo.exists) {
-      await FileSystem.makeDirectoryAsync(photosDir, { intermediates: true });
+      await FS.makeDirectoryAsync(photosDir, { intermediates: true });
     }
   }
 
@@ -112,12 +130,15 @@ export class PhotoVerification {
       }
 
       // Save the photo to our directory
+      const FS = await getFileSystem();
+      if (!FS) throw new Error('FileSystem not available');
+
       const timestamp = Date.now();
       const filename = `${routineItem.replace(/\s+/g, '_')}_${timestamp}.jpg`;
-      const destinationUri = `${this.getPhotosDirectory()}${filename}`;
+      const destinationUri = `${await this.getPhotosDirectory()}${filename}`;
 
       // Copy the file
-      await FileSystem.copyAsync({
+      await FS.copyAsync({
         from: result.assets[0].uri,
         to: destinationUri,
       });
@@ -161,12 +182,15 @@ export class PhotoVerification {
       }
 
       // Save the photo to our directory
+      const FS = await getFileSystem();
+      if (!FS) throw new Error('FileSystem not available');
+
       const timestamp = Date.now();
       const filename = `${routineItem.replace(/\s+/g, '_')}_${timestamp}.jpg`;
-      const destinationUri = `${this.getPhotosDirectory()}${filename}`;
+      const destinationUri = `${await this.getPhotosDirectory()}${filename}`;
 
       // Copy the file
-      await FileSystem.copyAsync({
+      await FS.copyAsync({
         from: result.assets[0].uri,
         to: destinationUri,
       });
@@ -259,10 +283,13 @@ export class PhotoVerification {
    */
   async deletePhoto(record: PhotoRecord): Promise<void> {
     try {
+      const FS = await getFileSystem();
+      if (!FS) throw new Error('FileSystem not available');
+
       // Delete the file
-      const fileInfo = await FileSystem.getInfoAsync(record.uri);
+      const fileInfo = await FS.getInfoAsync(record.uri);
       if (fileInfo.exists) {
-        await FileSystem.deleteAsync(record.uri);
+        await FS.deleteAsync(record.uri);
       }
 
       // Remove from records
@@ -305,11 +332,14 @@ export class PhotoVerification {
    */
   async getStorageUsed(): Promise<number> {
     try {
+      const FS = await getFileSystem();
+      if (!FS) return 0;
+
       const records = await this.getAllPhotoRecords();
       let totalSize = 0;
 
       for (const record of records) {
-        const info = await FileSystem.getInfoAsync(record.uri);
+        const info = await FS.getInfoAsync(record.uri);
         if (info.exists && info.size !== undefined) {
           totalSize += info.size;
         }

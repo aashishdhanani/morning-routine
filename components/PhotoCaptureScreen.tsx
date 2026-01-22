@@ -37,7 +37,7 @@ export default function PhotoCaptureScreen({
   }, [visible, routineItem]);
 
   const loadExistingPhoto = async () => {
-    if (!photoService.isAvailable()) {
+    if (!(await photoService.isAvailable())) {
       console.warn('Photo service not available');
       return;
     }
@@ -56,7 +56,7 @@ export default function PhotoCaptureScreen({
   };
 
   const handleTakePhoto = async () => {
-    if (!photoService.isAvailable()) {
+    if (!(await photoService.isAvailable())) {
       Alert.alert('Not Available', 'Photo features are not available in this environment.', [
         { text: 'OK' },
       ]);
@@ -91,7 +91,7 @@ export default function PhotoCaptureScreen({
   };
 
   const handlePickPhoto = async () => {
-    if (!photoService.isAvailable()) {
+    if (!(await photoService.isAvailable())) {
       Alert.alert('Not Available', 'Photo features are not available in this environment.', [
         { text: 'OK' },
       ]);
