@@ -4,8 +4,7 @@ import { RoutineManager } from '../services/RoutineManager';
 import { RoutineItem, ROUTINE_ITEM_INFO } from '../types/RoutineItem';
 import { HistoryManager } from '../services/HistoryManager';
 import PushupTrackingScreen from './PushupTrackingScreen';
-// Temporarily disabled due to expo-file-system compatibility issues in Expo Go
-// import PhotoCaptureScreen from './PhotoCaptureScreen';
+import PhotoCaptureScreen from './PhotoCaptureScreen';
 import HistoryCard from './HistoryCard';
 // CalendarEmailService and MusicService removed - calendar and music are now simple checkboxes
 import {
@@ -164,15 +163,14 @@ export default function RoutineChecklist({
         onComplete={handlePushupComplete}
       />
 
-      {/* Temporarily disabled due to expo-file-system compatibility issues in Expo Go */}
-      {/* {photoItem && (
+      {photoItem && (
         <PhotoCaptureScreen
           visible={photoItem !== null}
           routineItem={photoItem}
           onClose={() => setPhotoItem(null)}
           onPhotoTaken={handlePhotoTaken}
         />
-      )} */}
+      )}
     </View>
   );
 }
